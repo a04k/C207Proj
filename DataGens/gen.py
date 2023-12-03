@@ -78,8 +78,6 @@ def genPerson(existing_ssns):
     }
     return person
 
-existing_ssns = set()  # Keep track of generated SSNs
-
 personData = [genPerson(existing_ssns) for _ in range(250)]
 sql_insert_statement = "INSERT INTO Person (SSN, Fname, Lname, Address, PhoneNumber, Bdate, Gender, Email) VALUES\n "
 
