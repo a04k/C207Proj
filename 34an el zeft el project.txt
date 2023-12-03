@@ -1,0 +1,93 @@
+MEMBERS:  
+
+team sport
+{	football
+		football academy 30 (coach) 
+		1st team 30 (coach)
+	basketball
+		male team 12 (coach) 
+		Female team 12 (coach)
+}
+84
+
+individual_sport
+{
+	swimming 10 (3 coaches)
+	kung fu	10 (3 coaches) 
+}
+20
+
+104 + 96 non-pro = 200 MEMBERS
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+EMPLOYEE:
+
+
+
+
+catering
+{
+restaurant 5
+	Acheron 16 (2 branches)
+	BrainAttack 8 (1)
+	Alrahmany 8 (1)
+	FayoumFriedChicken 6(1) 
+	Claban 6 (1)
+cafe 2 
+	Rcafe 15 (3 branches)
+	CircleB 8	
+	
+
+}
+65
+
+Management
+{ 
+Sport 16
+Events 5
+Services 5
+Quality 5
+Catering 3
+Management Board 6 "Five Managements' managers + club president"
+} 35
+
+
+
+coach {10}
