@@ -122,14 +122,16 @@ print("-> done")
 
   ### Data Inserts
   ---
-    ``` SQL
-    
+    ```
+
 
     ```
 
  ###  Queries
  ---
- ``` SQL
+ We had plenty of query ideas, seeing that we have a whole lot of tables and data to work with but we settled on the following 20:
+
+  ``` 
 
 
-```
+  ```
