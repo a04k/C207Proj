@@ -22,9 +22,8 @@
 - **RM- Relational Model**
   ![RM](./EER%2CRM%20Schemas/RM.jpeg)
 
-
-  ### Generating the Data for Inserts
-  ---
+### Generating the Data for Inserts
+---
    Writing and creating data for people manually would have taken a very long time especially when dealing with a whole lot of it so, to save time we built a program that could give insert statements to fill up the tables.
 
   ```python
