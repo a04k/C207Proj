@@ -17,10 +17,10 @@
   ### Schemas
   ---
 - **EER- Enhanced Entity Relationship**
-  ![EER](./EER%2CRM%20Schemas/EER.jpeg)
+  ![EER](./Digital Schemas/EER.jpg)
 
 - **RM- Relational Model**
-  ![RM](./EER%2CRM%20Schemas/RM.jpeg)
+  ![RM](./Digital Schemas/RM.jpg)
 
 ### Generating the Data for Inserts
 ---
