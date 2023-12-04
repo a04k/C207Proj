@@ -1,12 +1,12 @@
-# C207Proj -  Basic Database Project
-# A Sports Club Database
+# COMP207 Project : Club Database
 <h2>Team Code</h2>
-<h3>AANSS<h3>
+  <h3>AANSS<h3>
 <h2> Team Members </h2>
-<ul>
-<li><h4 href="https://github.com/Alucard0100">Ahmed Ashraf - @Alucard0100 </h4></li>
-<li><h4 href="https://github.com/a04k">Ahmed Khaled - @a04k </h4></li>
-<li><h4 href=" ">Noureen Ahmed - </h4></li>
-<li><h4 href=" ">Seif Mohamed- </h4></li>
-<li><h4 href="https://github.com/Sherif-Lotfy">Sherif Lotfy- @Sherif-Lotfy</h4></li>
-</ul>
+  <ul>
+  <li><h4>Ahmed Ashraf - [@Alucard0100](https://github.com/Alucard0100) </h4></li>
+  <li><h4>Ahmed Khaled - [@a04k](https://github.com/a04k) </h4></li>
+  <li><h4>Noureen Ahmed - </h4></li>
+  <li><h4>Seif Mohamed- </h4></li>
+  <li><h4>Sherif Lotfy- [@Sherif-Lotfy](https://github.com/Sherif-Lotfy)</h4></li>
+  </ul> 
+<h1>  </h1>
