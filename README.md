@@ -8,8 +8,8 @@
 
 - **Ahmed Ashraf** --- [@Alucard0100](https://github.com/Alucard0100)
 - **Ahmed Khaled** --- [@a04k](https://github.com/a04k)
-- **Noureen Ahmed**
-- **Seif Mohamed**
+- **Noureen Ahmed** --- [@Noureen-Ahmed](https://github.com/Noureen-Ahmed)
+- **Seif Mohamed** ---
 - **Sherif Lotfy** --- [@Sherif-Lotfy](https://github.com/Sherif-Lotfy)
 
  ## Project Components
