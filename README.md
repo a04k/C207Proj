@@ -9,7 +9,7 @@
 - **Ahmed Ashraf** --- [@Alucard0100](https://github.com/Alucard0100)
 - **Ahmed Khaled** --- [@a04k](https://github.com/a04k)
 - **Noureen Ahmed** --- [@Noureen-Ahmed](https://github.com/Noureen-Ahmed)
-- **Seif Mohamed** ---
+- **Seif Mohamed** --- [@sabdelmoniem](https://github.com/sabdelmoniem)
 - **Sherif Lotfy** --- [@Sherif-Lotfy](https://github.com/Sherif-Lotfy)
 
  ## Project Components
