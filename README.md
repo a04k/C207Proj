@@ -16,7 +16,10 @@
 
   ### Schemas
   ---
+- **EER- Enhanced Entity Relationship**
   ![EER](./EER%2CRM%20Schemas/EER.jpeg)
+
+- **RM- Relational Model**
   ![RM](./EER%2CRM%20Schemas/RM.jpeg)
 
 
