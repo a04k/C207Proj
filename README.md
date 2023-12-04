@@ -17,7 +17,7 @@
   ### Schemas
   ---
   ![EER](./EER%2CRM%20Schemas/EER.jpeg)
-  ![EER](./EER%2CRM%20Schemas/RM.jpeg)
+  ![RM](./EER%2CRM%20Schemas/RM.jpeg)
 
 
   ### Generating the Data for Inserts
