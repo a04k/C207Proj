@@ -109,11 +109,12 @@ sql_insert_statement = "INSERT INTO Person (SSN, Fname, Lname, Address, PhoneNum
 
 for person in personData:
     values = f"({person['SSN']}, '{person['Fname']}', '{person['Lname']}', '{person['address']}', '{person['phone_number']}', '{person['birthdate']}', '{person['gender']}', '{person['email']}'),\n"
-    sql_insert_stat   ement += values
+    sql_insert_statement += values
 
 with open('genData.txt', 'w') as file:
     file.write(sql_insert_statement)
 
 print("-> done")
+```
 
-
+  This generator code can then be edited so we generate data for specific groups, so we could fill up the tables with the data required, and just add all of it into the Person superclass.
