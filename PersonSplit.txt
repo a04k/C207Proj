@@ -19,48 +19,9 @@ individual_sport
 
 104 + 96 non-pro = 200 MEMBERS
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+---------------------------------------------------------------------------------
 
 EMPLOYEE:
-
-
-
 
 catering
 {
@@ -74,7 +35,6 @@ cafe 2
 	Rcafe 15 (3 branches)
 	CircleB 8	
 	
-
 }
 65
 
@@ -87,7 +47,6 @@ Quality 5
 Catering 3
 Management Board 6 "Five Managements' managers + club president"
 } 35
-
 
 
 coach {10}
