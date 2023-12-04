@@ -117,4 +117,6 @@ with open('genData.txt', 'w') as file:
 print("-> done")
 ```
 
-  This generator code can then be edited so we generate data for specific groups, so we could fill up the tables with the data required, and just add all of it into the Person superclass.
+  This data generator code can then be edited so we generate data for specific groups, so we could fill up the tables with the data required, and just add all of it into the Person superclass.
+  P.S : theres a C++ version of this code too, just not updated though.
+  
