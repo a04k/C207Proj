@@ -91,7 +91,7 @@ def ssnGen():
 used_ssn = set()
 
 
-def genPerson(existing_ssns):
+def genPerson():
     Fname, Lname, gender, address = genData()
     name = Fname + Lname
     SSN = ssnGen()
@@ -107,7 +107,7 @@ def genPerson(existing_ssns):
     }
     return person
 
-personData = [genPerson(existing_ssns) for _ in range(250)]
+personData = [genPerson() for _ in range(250)]
 sql_insert_statement = "INSERT INTO Person (SSN, Fname, Lname, Address, PhoneNumber, Bdate, Gender, Email) VALUES\n "
 
 for person in personData:
