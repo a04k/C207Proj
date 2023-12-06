@@ -1,0 +1,47 @@
+MEMBERS{
+
+Sport-
+PRO_Players:  INSERT INTO person and member and pro
+
+-AND teamsport_player
+1-30 Football: First team
+31-60 Football: Academy
+61-72 Basketball: Mens Team
+73-84 Basketball: Womens Team
+
+-AND individualSport_Player
+85-94 Swimming
+95-104 Kung Fu
+
+coaches :: Person and Pro <not member>
+105-114 
+
+NON PRO MEMBERS --> 115-200 [
+ 115-149 --> Management{
+
+  ==> INSERT INTO Person -> Employee -> Management Employee
+   and managers -> ALL THE LINE ABOVE + Manager_SSN;
+
+   115->130 : sport management - 130 Manager
+   131->135: Event Management - 135 Manager
+   136->140 : Quality Management - 140 Manager
+   141->148: Services Management - 148 Manager
+   149-> 152: Board - 149 Manager :: club president.
+
+
+  153->200 :: Just Members -> INSERT INTO Person+Member
+  ]
+}
+
+201-267 :: CATERING EMPLOYEES -> Insert into Person , Employee, Catering Staff
+
+  SVs SSNs also inserted into supervisorssn of catering location
+
+  201-216 : Restaurant 1 (2 BRANCHES - 2SV (208,216)) 16employees 2 of them sv
+  217-224 : Restaurant 2 (1 BRANCH - SV (224)) 8 employees 1 of them sv 5 reg
+  225-232 : Restaurant 3 (1 BRANCH - SV (232)) 8 employees 1 of them sv 5 reg
+  233-238 : Restaurant 4 (1 BRANCH - SV (238)) 6 employees 1 of them sv 5 reg
+  239-244 : Restaurant 5 (1 BRANCH - SV (244)) 6 employees 1 of them sv 5 reg
+
+  HIGHER SALARIES FOR 208,216,224,232,238,244
+}

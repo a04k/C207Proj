@@ -61,7 +61,7 @@ def ssnGen():
             return current_ssn
 
 used_ssn = set()
-current_ssn = 210
+current_ssn = 200
 
 def genPerson():
     Fname, Lname, gender, address = genData()
@@ -81,7 +81,7 @@ def genPerson():
 
 personData = [genPerson() for _ in range(58)]
 
-employeeData = [{'SSN': person['SSN'], 'Salary':random.choice([45,50000])} for person in personData]
+employeeData = [{'SSN': person['SSN'], 'Salary':random.choice([48000,50000)} for person in personData]
 
 person_insert_statement = "INSERT INTO Person (SSN, Fname, Lname, Address, Phone, Bdate, Gender, Email) VALUES\n "
 
