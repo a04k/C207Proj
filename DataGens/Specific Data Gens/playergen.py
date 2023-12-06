@@ -1,35 +1,3 @@
-# COMP207 Project: Club Database
-
-## Team Code
-
-### AANSS
-
-## Team Members
-
-- **Ahmed Ashraf** --- [@Alucard0100](https://github.com/Alucard0100)
-- **Ahmed Khaled** --- [@a04k](https://github.com/a04k)
-- **Noureen Ahmed** --- [@Noureen-Ahmed](https://github.com/Noureen-Ahmed)
-- **Seif Mohamed** --- [@sabdelmoniem](https://github.com/sabdelmoniem)
-- **Sherif Lotfy** --- [@Sherif-Lotfy](https://github.com/Sherif-Lotfy)
-
- ## Project Components
-
-  ### Schemas
-  ---
--  **EER- Enhanced Entity Relationship**
-  ![EER](./DigitalSchemas/EER.jpg)
-
-- **RM- Relational Model**
-  ![RM](./DigitalSchemas/RM.jpg)
-
-- **RM- Relational Model**
-  ![WB-Model](./DigitalSchemas/WBModel.jpg)
-
-### Generating the Data for Inserts
----
-   Writing and creating data for people manually would have taken a very long time especially when dealing with a whole lot of it so, to save time we built a program that could give insert statements to fill up the tables.
-
-  ```python
 import random
 import datetime
 
@@ -69,10 +37,10 @@ def genData():
     elif area == 'Maadi':
         street = random.choice(maadi_streets)
         city= 'Cairo'
-  #name part
+   #name part
     nameM = ["Ahmed","Seif","Sherif","Marawan","Ehab","Kareem","Omar","Amr","Amir","Zeyad","Rashad","Abdallah","Abdelrahman","Ali","Wael","Mohamed","Mahmoud","Yousif","Mostafa","Adham","Ibrahim","Eyad","Abdalaziz","Haytham"]
     nameF = ["Aya","Amal","Amani","Omnya","Arwa","Nour","Rahma","Shahd","Noureen","Mariam","Nada","Esraa","Hager","Nourhan","Yasmin","Yara","Dina","Hana","Salma","Toaa","Eman"]  
-    gender = random.choice(['M', 'F'])  
+    gender = random.choice(['M'])  
     if gender == 'M':
         first_name = random.choice(nameM)
     else:
@@ -86,13 +54,14 @@ def genData():
 
 def ssnGen():
     while True:
-        nSSN = random.randint(100, 999)
-        if nSSN not in used_ssn:
-            used_ssn.add(nSSN)
-            return nSSN
+        global current_ssn
+        current_ssn += 1
+        if current_ssn not in used_ssn:
+            used_ssn.add(current_ssn)
+            return current_ssn
 
 used_ssn = set()
-
+current_ssn = 0
 
 def genPerson():
     Fname, Lname, gender, address = genData()
@@ -105,39 +74,46 @@ def genPerson():
         'address': address,
         'email': name + str(random.randint(0, 420)) + '@' + random.choice(['gmail.com', 'hotmail.com', 'outlook.com']),
         'phone_number': random.choice(['010', '011', '012', '015']) + ''.join([str(digit) for digit in random.sample(range(10), 8)]),
-        'birthdate': datetime.date(random.randint(1940, 2016), random.randint(1, 12), random.randint(1, 28)),
+        'birthdate': datetime.date(random.randint(1987, 2005), random.randint(1, 12), random.randint(1, 28)),
         'gender': gender
     }
     return person
 
-personData = [genPerson() for _ in range(250)]
-sql_insert_statement = "INSERT INTO Person (SSN, Fname, Lname, Address, PhoneNumber, Bdate, Gender, Email) VALUES\n "
+personData = [genPerson() for _ in range(30)]
+
+playerData = [{'SSN': person['SSN'], 'Salary': random.randint(200000, 450000), 'SportName': 'Football'} for person in personData]
+memberData = [{'SSN': person['SSN'], 'Membership.SD':datetime.date(random.randint(2005, 2022), random.randint(1, 12), random.randint(1, 28))} for person in personData]
+tsData = [{'SSN': person['SSN']} for person in personData]
+
+person_insert_statement = "INSERT INTO Person (SSN, Fname, Lname, Address, Phone, Bdate, Gender, Email) VALUES\n "
 
 for person in personData:
-    values = f"({person['SSN']}, '{person['Fname']}', '{person['Lname']}', '{person['address']}', '{person['phone_number']}', '{person['birthdate']}', '{person['gender']}', '{person['email']}'),\n"
-    sql_insert_statement += values
+    values = f'({person['SSN']}, "{person['Fname']}", "{person['Lname']}", "{person['address']}", "{person['phone_number']}", "{person['birthdate']}", "{person['gender']}", "{person['email']}"),\n'
+    person_insert_statement += values
 
-with open('genData.txt', 'w') as file:
-    file.write(sql_insert_statement)
+player_insert_statement = "INSERT INTO Player (Player_SSN, Salary, SportName) VALUES\n "
+
+for player in playerData:
+    values = f"({player['SSN']}, {player['Salary']}, '{player['SportName']}'),\n"
+    player_insert_statement += values
+
+member_insert_statement = "INSERT INTO member (Member_SSN, MembershipStartDate) VALUES\n "
+
+for member in memberData:
+  values = f'({member["SSN"]}, "{member["Membership.SD"]}"),\n'
+  member_insert_statement += values
+
+ts_insert_statement = "INSERT INTO TeamSport_Player (Player_Player_SSN, Team_Name) VALUES\n "
+
+for ts in tsData:
+  values = f'({ts["SSN"]}, "First Team"),\n'
+  ts_insert_statement += values
+
+totalinsert = person_insert_statement + member_insert_statement+ player_insert_statement+ ts_insert_statement
+
+
+with open('FAData.txt', 'w') as file:
+    file.write(totalinsert)
+
 
 print("-> done")
-```
-
-  This data generator code can then be edited so we generate data for specific groups, so we could fill up the tables with the data required, and just add all of it into the Person superclass.
-  P.S : theres a C++ version of this code too, just not updated though.
-
-  ### Data Inserts
-  ---
-    ```
-
-
-    ```
-
- ###  Queries
- ---
- We had plenty of query ideas, seeing that we have a whole lot of tables and data to work with but we settled on the following 20:
-
-  ``` 
-
-
-  ```

@@ -1,0 +1,33 @@
+INSERT INTO Person (SSN, Fname, Lname, Address, Phone, Bdate, Gender, Email) VALUES
+ (85, "Abdalaziz", "Yaser", "42 Al Saad Al Aaly, Maadi, Cairo", "01276213495", "2004-07-12", "M", "AbdalazizYaser193@outlook.com"),
+(86, "Mohamed", "Fawzi", "64 Al Saad Al Aaly, Maadi, Cairo", "01220674581", "2000-01-17", "M", "MohamedFawzi162@hotmail.com"),
+(87, "Noureen", "Sobhi", "16 Al Merghany, Heliopolis, Cairo", "01275480369", "1994-09-01", "F", "NoureenSobhi262@gmail.com"),
+(88, "Ehab", "Ashraf", "90 9 St., Maadi, Cairo", "01051463092", "1999-08-22", "M", "EhabAshraf6@hotmail.com"),
+(89, "Aya", "Hassan", "17 Talaat Harb, Downtown, Cairo", "01065320987", "1994-07-05", "F", "AyaHassan361@gmail.com"),
+(90, "Yousif", "Yaser", "32 Gamal Abdel Nasser, Al-Salam, Cairo", "01596231748", "2001-03-12", "M", "YousifYaser278@gmail.com"),
+(91, "Kareem", "Ezzat", "19 Al Nozha, Heliopolis, Cairo", "01235790148", "2001-02-17", "M", "KareemEzzat315@outlook.com"),
+(92, "Ali", "Magdy", "86 kamal Al Tawil, Zamalek, Cairo", "01549027158", "2001-10-11", "M", "AliMagdy98@hotmail.com"),
+(93, "Kareem", "Zakaria", "43 Gad Eid, Al Doqi, Giza", "01101942786", "1999-05-08", "M", "KareemZakaria100@hotmail.com"),
+(94, "Ibrahim", "Emad", "80 Al Merghany, Heliopolis, Cairo", "01145601327", "1995-04-17", "M", "IbrahimEmad311@outlook.com");
+INSERT INTO member (Member_SSN, MembershipStartDate) VALUES
+ (85, "2021-08-15"),
+(86, "2022-12-19"),
+(87, "2017-03-08"),
+(88, "2015-07-12"),
+(89, "2018-04-09"),
+(90, "2019-05-13"),
+(91, "2023-10-15"),
+(92, "2015-09-27"),
+(93, "2015-09-20"),
+(94, "2019-01-13");
+INSERT INTO Pro_Player (Player_SSN, Salary, SportName) VALUES
+ (85, 51255, 'Swimming'),
+(86, 76390, 'Swimming'),
+(87, 54326, 'Swimming'),
+(88, 71551, 'Swimming'),
+(89, 56529, 'Swimming'),
+(90, 56834, 'Swimming'),
+(91, 53113, 'Swimming'),
+(92, 69354, 'Swimming'),
+(93, 85811, 'Swimming'),
+(94, 77275, 'Swimming');

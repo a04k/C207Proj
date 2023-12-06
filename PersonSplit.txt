@@ -26,17 +26,17 @@ EMPLOYEE:
 catering
 {
 restaurant 5
-	Acheron 16 (2 branches)
-	BrainAttack 8 (1)
-	Alrahmany 8 (1)
-	FayoumFriedChicken 6(1) 
-	Claban 6 (1)
+	Acheron 16 (2 branches) 14
+	BrainAttack 8 (1) 7
+	Alrahmany 8 (1) 7
+	FayoumFriedChicken 6(1) 5
+	Claban 6 (1) 5
 cafe 2 
-	Rcafe 15 (3 branches)
-	CircleB 8	
+	Rcafe 15 (3 branches) 12
+	CircleB 8	 7
 	
 }
-65
+67
 
 Management
 { 
@@ -45,8 +45,8 @@ Events 5
 Services 5
 Quality 5
 Catering 3
-Management Board 6 "Five Managements' managers + club president"
-} 35
+Management Board 5 -> 1 is pres
+} 39
 
 
 coach {10}

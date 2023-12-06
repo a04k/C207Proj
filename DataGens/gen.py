@@ -85,6 +85,7 @@ for person in personData:
     values = f"({person['SSN']}, '{person['Fname']}', '{person['Lname']}', '{person['address']}', '{person['phone_number']}', '{person['birthdate']}', '{person['gender']}', '{person['email']}'),\n"
     sql_insert_statement += values
 
+
 with open('genData.txt', 'w') as file:
     file.write(sql_insert_statement)
 

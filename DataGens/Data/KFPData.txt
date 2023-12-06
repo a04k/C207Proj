@@ -1,0 +1,33 @@
+INSERT INTO Person (SSN, Fname, Lname, Address, Phone, Bdate, Gender, Email) VALUES
+ (95, "Aya", "Yaser", "9 Al Nahda, Maadi, Cairo", "01141387965", "2004-03-24", "F", "AyaYaser17@gmail.com"),
+(96, "Mostafa", "Farag", "20 Talaat Harb, Imbaba, Giza", "01191075823", "1994-03-11", "M", "MostafaFarag336@outlook.com"),
+(97, "Yousif", "Sobhi", "95 Gezira, Zamalek, Cairo", "01501938642", "2003-06-24", "M", "YousifSobhi349@hotmail.com"),
+(98, "Abdelrahman", "Fawzi", "9 Al Nadi, Maadi, Cairo", "01286971035", "1997-06-22", "M", "AbdelrahmanFawzi48@hotmail.com"),
+(99, "Eyad", "Khalil", "65 Hassan Ramadan, Al Doqi, Giza", "01015930864", "1995-04-27", "M", "EyadKhalil152@hotmail.com"),
+(100, "Mariam", "Khaled", "96 Al Ahram, Heliopolis, Cairo", "01109861357", "2003-02-17", "F", "MariamKhaled189@outlook.com"),
+(101, "Mostafa", "Fawzi", "57 Shaheen, Al Doqi, Giza", "01156017924", "2003-12-16", "M", "MostafaFawzi181@outlook.com"),
+(102, "Ehab", "Hani", "52 Al Kanal, Maadi, Cairo", "01156947108", "2004-01-14", "M", "EhabHani57@outlook.com"),
+(103, "Mahmoud", "Adel", "82 Gad Eid, Al Doqi, Giza", "01585069732", "2002-03-27", "M", "MahmoudAdel335@hotmail.com"),
+(104, "Yara", "Waleed", "77 28St. ,ElTahrir City, Imbaba, Giza", "01090851326", "1995-07-09", "F", "YaraWaleed351@hotmail.com");
+INSERT INTO member (Member_SSN, MembershipStartDate) VALUES
+ (95, "2015-02-09"),
+(96, "2022-01-03"),
+(97, "2016-07-22"),
+(98, "2020-02-02"),
+(99, "2017-11-03"),
+(100, "2022-11-14"),
+(101, "2015-09-07"),
+(102, "2018-01-18"),
+(103, "2017-01-25"),
+(104, "2015-02-24");
+INSERT INTO Pro_Player (Player_SSN, Salary, SportName) VALUES
+ (95, 73710, 'Kung Fu'),
+(96, 88335, 'Kung Fu'),
+(97, 69402, 'Kung Fu'),
+(98, 84638, 'Kung Fu'),
+(99, 83078, 'Kung Fu'),
+(100, 47062, 'Kung Fu'),
+(101, 89653, 'Kung Fu'),
+(102, 55698, 'Kung Fu'),
+(103, 79954, 'Kung Fu'),
+(104, 57287, 'Kung Fu');
