@@ -1,0 +1,11 @@
+INSERT INTO Person (SSN, Fname, Lname, Address, PhoneNumber, Bdate, Gender, Email) VALUES
+(105, 'Yousif', 'Emad', '93 Champeleon, Downtown, Cairo', '01169247835', '1985-03-11', 'M', 'YousifEmad138@hotmail.com'),
+(106, 'Eyad', 'Fawzi', '53 Damascus, Maadi, Cairo', '01138452016', '1976-03-04', 'M', 'EyadFawzi146@outlook.com'),
+(107, 'Abdalaziz', 'Zakaria', '62 Al Hegaz, Heliopolis, Cairo', '01132159408', '1962-01-17', 'M', 'AbdalazizZakaria375@gmail.com'),
+(108, 'Ali', 'Mohamed', '5 Talaat Harb, Imbaba, Giza', '01129463781', '1967-05-19', 'M', 'AliMohamed256@gmail.com'),
+(109, 'Kareem', 'Sobhi', '92 Ahmed Helmy, Shobra, Cairo', '01164875392', '1985-04-24', 'M', 'KareemSobhi162@gmail.com'),
+(110, 'Abdallah', 'Khaled', '17 Shagaret Al Dor, Zamalek, Cairo', '01296812375', '1978-02-15', 'M', 'AbdallahKhaled113@hotmail.com'),
+(111, 'Ehab', 'Khaled', '57 Mamdouh Salem, Imbaba, Giza', '01198410573', '1962-11-26', 'M', 'EhabKhaled379@outlook.com'),
+(112, 'Amr', 'Adel', '70 9 St., Maadi, Cairo', '01513249768', '1985-07-19', 'M', 'AmrAdel89@gmail.com'),
+(113, 'Wael', 'Khalil', '65 Hassan Sabry, Zamalek, Cairo', '01016725398', '1984-03-21', 'M', 'WaelKhalil88@outlook.com'),
+(114, 'Yousif', 'Yaser', '83 Talaat Harb, Imbaba, Giza', '01245380216', '1964-07-01', 'M', 'YousifYaser110@outlook.com');

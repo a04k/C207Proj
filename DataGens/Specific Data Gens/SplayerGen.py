@@ -81,7 +81,7 @@ def genPerson():
 
 personData = [genPerson() for _ in range(10)]
 
-playerData = [{'SSN': person['SSN'], 'Salary': random.randint(45000, 90000), 'SportName': 'Kung Fu'} for person in personData]
+playerData = [{'SSN': person['SSN'],'SportName': 'Kung Fu'} for person in personData]
 memberData = [{'SSN': person['SSN'], 'Membership.SD':datetime.date(random.randint(2015, 2023), random.randint(1, 12), random.randint(1, 28))} for person in personData]
 tsData = [{'SSN': person['SSN']} for person in personData]
 
@@ -91,10 +91,10 @@ for person in personData:
     values = f'({person['SSN']}, "{person['Fname']}", "{person['Lname']}", "{person['address']}", "{person['phone_number']}", "{person['birthdate']}", "{person['gender']}", "{person['email']}"),\n'
     person_insert_statement += values
 
-player_insert_statement = "INSERT INTO Pro_Player (Player_SSN, Salary, SportName) VALUES\n "
+player_insert_statement = "INSERT INTO Pro_Player (Player_SSN, SportName) VALUES\n "
 
 for player in playerData:
-    values = f"({player['SSN']}, {player['Salary']}, '{player['SportName']}'),\n"
+    values = f"({player['SSN']}, '{player['SportName']}'),\n"
     player_insert_statement += values
 
 member_insert_statement = "INSERT INTO member (Member_SSN, MembershipStartDate) VALUES\n "
@@ -102,7 +102,6 @@ member_insert_statement = "INSERT INTO member (Member_SSN, MembershipStartDate) 
 for member in memberData:
   values = f'({member["SSN"]}, "{member["Membership.SD"]}"),\n'
   member_insert_statement += values
-
 
 totalinsert = person_insert_statement + member_insert_statement+ player_insert_statement
 

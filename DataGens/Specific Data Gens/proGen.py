@@ -40,7 +40,7 @@ def genData():
    #name part
     nameM = ["Ahmed","Seif","Sherif","Marawan","Ehab","Kareem","Omar","Amr","Amir","Zeyad","Rashad","Abdallah","Abdelrahman","Ali","Wael","Mohamed","Mahmoud","Yousif","Mostafa","Adham","Ibrahim","Eyad","Abdalaziz","Haytham"]
     nameF = ["Aya","Amal","Amani","Omnya","Arwa","Nour","Rahma","Shahd","Noureen","Mariam","Nada","Esraa","Hager","Nourhan","Yasmin","Yara","Dina","Hana","Salma","Toaa","Eman"]  
-    gender = random.choice(['F'])  
+    gender = random.choice(['M'])  
     if gender == 'M':
         first_name = random.choice(nameM)
     else:
@@ -61,7 +61,7 @@ def ssnGen():
             return current_ssn
 
 used_ssn = set()
-current_ssn = 72
+current_ssn = 108
 
 def genPerson():
     Fname, Lname, gender, address = genData()
@@ -74,45 +74,26 @@ def genPerson():
         'address': address,
         'email': name + str(random.randint(0, 420)) + '@' + random.choice(['gmail.com', 'hotmail.com', 'outlook.com']),
         'phone_number': random.choice(['010', '011', '012', '015']) + ''.join([str(digit) for digit in random.sample(range(10), 8)]),
-        'birthdate': datetime.date(random.randint(1990, 2002), random.randint(1, 12), random.randint(1, 28)),
+        'birthdate': datetime.date(random.randint(1987, 2005), random.randint(1, 12), random.randint(1, 28)),
         'gender': gender
     }
     return person
 
-personData = [genPerson() for _ in range(12)]
+personData = [genPerson() for _ in range(6)]
 
-playerData = [{'SSN': person['SSN'], 'SportName': 'Basketball'} for person in personData]
-memberData = [{'SSN': person['SSN'], 'Membership.SD':datetime.date(random.randint(2020, 2022), random.randint(1, 12), random.randint(1, 28))} for person in personData]
-tsData = [{'SSN': person['SSN']} for person in personData]
+proData = [{'SSN': person['SSN'],'Management_name': "Sport" ,'Salary':random.randint(120000, 150000), 'ContractStart':datetime.date(random.randint(2020, 2023), random.randint(1, 12), random.randint(1, 6)), 'ContractEnd':datetime.date(random.randint(2024, 2025), random.randint(1, 12), random.randint(1, 28))} for person in personData]
 
-person_insert_statement = "INSERT INTO Person (SSN, Fname, Lname, Address, Phone, Bdate, Gender, Email) VALUES\n "
+pro_insert_statement = "INSERT INTO Pro (Coach_SSN, Management_Name, Salary, ContractStart, ContractEnd) VALUES\n "
 
-for person in personData:
-    values = f'({person['SSN']}, "{person['Fname']}", "{person['Lname']}", "{person['address']}", "{person['phone_number']}", "{person['birthdate']}", "{person['gender']}", "{person['email']}"),\n'
-    person_insert_statement += values
-
-player_insert_statement = "INSERT INTO Pro_Player (Player_SSN, SportName) VALUES\n "
-
-for player in playerData:
-    values = f"({player['SSN']},'{player['SportName']}'),\n"
-    player_insert_statement += values
-
-member_insert_statement = "INSERT INTO member (Member_SSN, MembershipStartDate) VALUES\n "
-
-for member in memberData:
-  values = f'({member["SSN"]}, "{member["Membership.SD"]}"),\n'
-  member_insert_statement += values
-
-ts_insert_statement = "INSERT INTO TeamSport_Player (Player_SSN, SportName, TeamName) VALUES\n "
-
-for ts in tsData:
-  values = f'({ts["SSN"]},"Basketball", "Womens Team"),\n'
-  ts_insert_statement += values
-
-totalinsert = person_insert_statement + member_insert_statement+ player_insert_statement+ ts_insert_statement
+for pro in proData:
+    values = f'({pro['SSN']},"{pro['Management_name']}",{pro['Salary']},"{pro['ContractStart']}","{pro['ContractEnd']}"),\n'
+    pro_insert_statement += values
 
 
-with open('fBBData.txt', 'w') as file:
+totalinsert = pro_insert_statement
+
+
+with open('CoachProData3.txt', 'w') as file:
     file.write(totalinsert)
 
 

@@ -1,0 +1,33 @@
+INSERT INTO Person (SSN, Fname, Lname, Address, Phone, Bdate, Gender, Email) VALUES
+ (85, "Salma", "Salah", "65 26 July St, Downtown, Cairo", "01521548936", "2002-01-02", "F", "SalmaSalah286@outlook.com"),
+(86, "Salma", "Khaled", "53 Kholousi, Shobra, Cairo", "01273980156", "2004-03-17", "F", "SalmaKhaled5@outlook.com"),
+(87, "Mostafa", "Sobhi", "24 Doletyan, Shobra, Cairo", "01539218046", "2001-11-15", "M", "MostafaSobhi199@outlook.com"),
+(88, "Toaa", "Hani", "20 Hassan Sabry, Zamalek, Cairo", "01217398620", "2000-01-24", "F", "ToaaHani357@gmail.com"),
+(89, "Yasmin", "Fawzi", "74 Salah El Din, Heliopolis, Cairo", "01208473291", "2000-09-16", "F", "YasminFawzi13@gmail.com"),
+(90, "Mostafa", "Khalil", "61 Salah El Din, Heliopolis, Cairo", "01564973102", "2001-08-10", "M", "MostafaKhalil107@outlook.com"),
+(91, "Yasmin", "Nader", "91 151 St., Maadi, Cairo", "01230586724", "1998-01-27", "F", "YasminNader230@hotmail.com"),
+(92, "Ibrahim", "Adel", "92 Bahgat Ali, Zamalek, Cairo", "01296273105", "2001-10-16", "M", "IbrahimAdel20@hotmail.com"),
+(93, "Abdallah", "Zakaria", "19 Shaheen, Al Doqi, Giza", "01597628104", "2003-09-01", "M", "AbdallahZakaria401@outlook.com"),
+(94, "Ahmed", "Khalil", "42 18St. , ElTahrir City, Imbaba, Giza", "01196237450", "1994-08-16", "M", "AhmedKhalil52@outlook.com");
+INSERT INTO member (Member_SSN, MembershipStartDate) VALUES
+ (85, "2022-03-23"),
+(86, "2021-06-21"),
+(87, "2016-06-19"),
+(88, "2019-07-28"),
+(89, "2018-08-18"),
+(90, "2021-12-10"),
+(91, "2019-03-05"),
+(92, "2022-03-12"),
+(93, "2015-03-12"),
+(94, "2019-04-06");
+INSERT INTO Pro_Player (Player_SSN, SportName) VALUES
+(85, 'Swimming'),
+(86, 'Swimming'),
+(87, 'Swimming'),
+(88, 'Swimming'),
+(89, 'Swimming'),
+(90, 'Swimming'),
+(91, 'Swimming'),
+(92, 'Swimming'),
+(93, 'Swimming'),
+(94, 'Swimming');

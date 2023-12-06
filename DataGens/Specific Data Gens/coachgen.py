@@ -96,7 +96,7 @@ for employee in employeeData:
     values = f"({employee['SSN']}, {employee['Salary']}),\n"
     employee_insert_statement += values
 
-coach_insert_statement = "INSERT INTO Coach (Coach_SSN, StartDateCoaching) VALUES\n "
+coach_insert_statement = "INSERT INTO Coach (Coach_SSN, SportName) VALUES\n "
 
 for coach in coachData:
   values = f'({coach['SSN']}, "{coach['StartDateCoaching']}" ),\n'

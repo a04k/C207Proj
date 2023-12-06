@@ -40,7 +40,7 @@ def genData():
    #name part
     nameM = ["Ahmed","Seif","Sherif","Marawan","Ehab","Kareem","Omar","Amr","Amir","Zeyad","Rashad","Abdallah","Abdelrahman","Ali","Wael","Mohamed","Mahmoud","Yousif","Mostafa","Adham","Ibrahim","Eyad","Abdalaziz","Haytham"]
     nameF = ["Aya","Amal","Amani","Omnya","Arwa","Nour","Rahma","Shahd","Noureen","Mariam","Nada","Esraa","Hager","Nourhan","Yasmin","Yara","Dina","Hana","Salma","Toaa","Eman"]  
-    gender = random.choice(['M', 'F'])  
+    gender = random.choice(['M'])  
     if gender == 'M':
         first_name = random.choice(nameM)
     else:
@@ -51,18 +51,19 @@ def genData():
 
     return first_name, last_name , gender , f"{random_number} {street}, {area}, {city}"
 
-
 def ssnGen():
     while True:
-        nSSN = random.randint(100, 999)
-        if nSSN not in used_ssn:
-            used_ssn.add(nSSN)
-            return nSSN
+        global current_ssn
+        current_ssn += 1
+        if current_ssn not in used_ssn:
+            used_ssn.add(current_ssn)
+            return current_ssn
 
 used_ssn = set()
+current_ssn = 107
 
 
-def genPerson(existing_ssns):
+def genPerson():
     Fname, Lname, gender, address = genData()
     name = Fname + Lname
     SSN = ssnGen()
@@ -73,12 +74,12 @@ def genPerson(existing_ssns):
         'address': address,
         'email': name + str(random.randint(0, 420)) + '@' + random.choice(['gmail.com', 'hotmail.com', 'outlook.com']),
         'phone_number': random.choice(['010', '011', '012', '015']) + ''.join([str(digit) for digit in random.sample(range(10), 8)]),
-        'birthdate': datetime.date(random.randint(1940, 2016), random.randint(1, 12), random.randint(1, 28)),
+        'birthdate': datetime.date(random.randint(1960, 1985), random.randint(1, 12), random.randint(1, 28)),
         'gender': gender
     }
     return person
 
-personData = [genPerson(existing_ssns) for _ in range(250)]
+personData = [genPerson() for _ in range(7)]
 sql_insert_statement = "INSERT INTO Person (SSN, Fname, Lname, Address, PhoneNumber, Bdate, Gender, Email) VALUES\n "
 
 for person in personData:
@@ -86,7 +87,7 @@ for person in personData:
     sql_insert_statement += values
 
 
-with open('genData.txt', 'w') as file:
+with open('coachpersonData2.txt', 'w') as file:
     file.write(sql_insert_statement)
 
 print("-> done")
