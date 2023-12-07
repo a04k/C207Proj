@@ -37,11 +37,31 @@ NON PRO MEMBERS --> 115-200 [
 
   SVs SSNs also inserted into supervisorssn of catering location
 
-  201-216 : Restaurant 1 (2 BRANCHES - 2SV (208,216)) 16employees 2 of them sv
-  217-224 : Restaurant 2 (1 BRANCH - SV (224)) 8 employees 1 of them sv 5 reg
-  225-232 : Restaurant 3 (1 BRANCH - SV (232)) 8 employees 1 of them sv 5 reg
-  233-238 : Restaurant 4 (1 BRANCH - SV (238)) 6 employees 1 of them sv 5 reg
-  239-244 : Restaurant 5 (1 BRANCH - SV (244)) 6 employees 1 of them sv 5 reg
+  201-216 : Azure (2 BRANCHES -11- 2SV (208,216)) 16employees 2 of them sv
+  217-224 : sail in sea (1 BRANCH -5- SV (224)) 8 employees 1 of them sv 5 reg
+  225-232 : Dominos (1 BRANCH -5- SV (232)) 8 employees 1 of them sv 5 reg
+  233-238 : Buffalo (1 BRANCH -5- SV (238)) 6 employees 1 of them sv 5 reg
+  239-244 : Dolato (1 BRANCH -5- SV (244)) 6 employees 1 of them sv 5 reg
 
-  HIGHER SALARIES FOR 208,216,224,232,238,244
+
+  245-259 : VAMOS (3 BRANCHES -7- 3SV(249,254,259) per branch , 5 Employees 1 of them sv )
+  260-267 : Costa Cafe (1 Branch -5- SV (267) 8 Employees 1 of them sv )
+  HIGHER SALARIES FOR 208,216,224,232,238,244,249,254,259,267
 }
+
+sponsors
+{
+  NIKE
+  WE
+  BanqueMisr
+ Watchit
+}
+
+Events
+{
+Swimming Championship (NIKE) 23-12-2023
+Fifa tournoment (WE) 28-01-2024
+New Years Concert (BanqueMisr) 31-12-2023
+Watch Party (Watchit) 02-01-2024
+}
+
