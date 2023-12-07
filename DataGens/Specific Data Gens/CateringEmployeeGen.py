@@ -79,9 +79,10 @@ def genPerson():
     }
     return person
 
-personData = [genPerson() for _ in range(58)]
+personData = [genPerson() for _ in range(67)]
 
-employeeData = [{'SSN': person['SSN'], 'Salary':random.choice(48000,50000)} for person in personData]
+employeeData = [{'SSN': person['SSN'], 'Salary':random.randint(48000,55000)} for person in personData]
+csData= [{'SSN': person['SSN']}for person in personData]
 
 person_insert_statement = "INSERT INTO Person (SSN, Fname, Lname, Address, Phone, Bdate, Gender, Email) VALUES\n "
 
@@ -95,7 +96,14 @@ for employee in employeeData:
   values = f'({employee["SSN"]},{employee["Salary"]}),\n'
   employee_insert_statement += values
 
-totalinsert = person_insert_statement + employee_insert_statement
+cs_insert_statement = "INSERT INTO CateringStaff (Worker_SSN) VALUES\n "
+
+for cs in csData:
+    values = f'({cs["SSN"]}),\n'
+    cs_insert_statement += values
+
+
+totalinsert = person_insert_statement + employee_insert_statement + cs_insert_statement
 
 
 with open('CemployeeData.txt', 'w') as file:

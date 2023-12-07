@@ -13,15 +13,6 @@ DROP SCHEMA IF EXISTS `Club_DB` ;
 -- Schema Club_DB
 -- -----------------------------------------------------
 CREATE SCHEMA IF NOT EXISTS `Club_DB` DEFAULT CHARACTER SET utf8 ;
--- -----------------------------------------------------
--- Schema club_db
--- -----------------------------------------------------
-DROP SCHEMA IF EXISTS `club_db` ;
-
--- -----------------------------------------------------
--- Schema club_db
--- -----------------------------------------------------
-CREATE SCHEMA IF NOT EXISTS `club_db` DEFAULT CHARACTER SET utf8 ;
 USE `Club_DB` ;
 
 -- -----------------------------------------------------
@@ -117,7 +108,7 @@ DROP TABLE IF EXISTS `Club_DB`.`Event` ;
 
 CREATE TABLE IF NOT EXISTS `Club_DB`.`Event` (
   `Name` VARCHAR(45) NOT NULL,
-  `Date` DATE NULL,
+  `Date` DATE NOT NULL,
   PRIMARY KEY (`Name`))
 ENGINE = InnoDB;
 
@@ -182,17 +173,17 @@ ENGINE = InnoDB;
 DROP TABLE IF EXISTS `Club_DB`.`Catering_Location` ;
 
 CREATE TABLE IF NOT EXISTS `Club_DB`.`Catering_Location` (
-  `Location` VARCHAR(15) NOT NULL,
+  `Location` VARCHAR(25) NOT NULL,
+  `CateringName` VARCHAR(25) NOT NULL,
   `Supervisor_ssn` INT NOT NULL,
-  `Catering_Name` VARCHAR(25) NOT NULL,
-  PRIMARY KEY (`Location`, `Catering_Name`),
+  PRIMARY KEY (`Location`, `CateringName`),
   CONSTRAINT `ay_haga`
     FOREIGN KEY (`Supervisor_ssn`)
     REFERENCES `Club_DB`.`Employee` (`Employee_SSN`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_Catering_Location_Catering1`
-    FOREIGN KEY (`Catering_Name`)
+    FOREIGN KEY (`CateringName`)
     REFERENCES `Club_DB`.`Catering` (`Name`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
@@ -205,8 +196,8 @@ ENGINE = InnoDB;
 DROP TABLE IF EXISTS `Club_DB`.`Place` ;
 
 CREATE TABLE IF NOT EXISTS `Club_DB`.`Place` (
-  `Location` VARCHAR(15) NOT NULL,
-  `PlaceName` VARCHAR(15) NOT NULL,
+  `PlaceName` VARCHAR(25) NOT NULL,
+  `Location` VARCHAR(25) NOT NULL,
   PRIMARY KEY (`PlaceName`))
 ENGINE = InnoDB;
 
@@ -217,8 +208,8 @@ ENGINE = InnoDB;
 DROP TABLE IF EXISTS `Club_DB`.`Hall` ;
 
 CREATE TABLE IF NOT EXISTS `Club_DB`.`Hall` (
+  `PlaceName` VARCHAR(25) NOT NULL,
   `NumberOfSeats` INT NOT NULL,
-  `PlaceName` VARCHAR(15) NOT NULL,
   PRIMARY KEY (`PlaceName`),
   CONSTRAINT `fk_Hall_Place1`
     FOREIGN KEY (`PlaceName`)
@@ -234,8 +225,8 @@ ENGINE = InnoDB;
 DROP TABLE IF EXISTS `Club_DB`.`Field` ;
 
 CREATE TABLE IF NOT EXISTS `Club_DB`.`Field` (
+  `PlaceName` VARCHAR(25) NOT NULL,
   `Area` FLOAT NOT NULL,
-  `PlaceName` VARCHAR(15) NOT NULL,
   PRIMARY KEY (`PlaceName`),
   CONSTRAINT `fk_Field_Place1`
     FOREIGN KEY (`PlaceName`)
@@ -252,17 +243,12 @@ DROP TABLE IF EXISTS `Club_DB`.`CateringStaff` ;
 
 CREATE TABLE IF NOT EXISTS `Club_DB`.`CateringStaff` (
   `Worker_SSN` INT NOT NULL,
-  `Catering_Location` VARCHAR(15) NOT NULL,
+  `Catering_Location` VARCHAR(25) NOT NULL,
   `Catering_Name` VARCHAR(25) NOT NULL,
   PRIMARY KEY (`Worker_SSN`),
   CONSTRAINT `fk_table1_Employee1`
     FOREIGN KEY (`Worker_SSN`)
     REFERENCES `Club_DB`.`Employee` (`Employee_SSN`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_CateringStaff_Catering_Location1`
-    FOREIGN KEY (`Catering_Location` , `Catering_Name`)
-    REFERENCES `Club_DB`.`Catering_Location` (`Location` , `Catering_Name`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -319,11 +305,11 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `Club_DB`.`TeamSport`
+-- Table `Club_DB`.`teamSport_Player`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `Club_DB`.`TeamSport` ;
+DROP TABLE IF EXISTS `Club_DB`.`teamSport_Player` ;
 
-CREATE TABLE IF NOT EXISTS `Club_DB`.`TeamSport` (
+CREATE TABLE IF NOT EXISTS `Club_DB`.`teamSport_Player` (
   `Player_SSN` INT NOT NULL,
   `TeamName` VARCHAR(15) NOT NULL,
   `SportName` VARCHAR(15) NOT NULL,
@@ -364,30 +350,13 @@ ENGINE = InnoDB;
 DROP TABLE IF EXISTS `Club_DB`.`Menu` ;
 
 CREATE TABLE IF NOT EXISTS `Club_DB`.`Menu` (
-  `optionNumber` INT NOT NULL,
-  `option` VARCHAR(20) NOT NULL,
   `Catering_Name` VARCHAR(25) NOT NULL,
-  PRIMARY KEY (`optionNumber`),
+  `Item` VARCHAR(30) NOT NULL,
+  `Price` FLOAT NOT NULL,
+  PRIMARY KEY (`Catering_Name`, `Item`),
   CONSTRAINT `fk_Menu_Catering1`
     FOREIGN KEY (`Catering_Name`)
     REFERENCES `Club_DB`.`Catering` (`Name`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `Club_DB`.`Menu-OpSize`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `Club_DB`.`Menu-OpSize` ;
-
-CREATE TABLE IF NOT EXISTS `Club_DB`.`Menu-OpSize` (
-  `Menu_optionNumber` INT NOT NULL,
-  `Size` VARCHAR(1) NOT NULL,
-  `Price` FLOAT NULL,
-  CONSTRAINT `fk_Menu-OpSize_Menu1`
-    FOREIGN KEY (`Menu_optionNumber`)
-    REFERENCES `Club_DB`.`Menu` (`optionNumber`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -401,6 +370,7 @@ DROP TABLE IF EXISTS `Club_DB`.`Pro` ;
 CREATE TABLE IF NOT EXISTS `Club_DB`.`Pro` (
   `Player_SSN` INT NULL,
   `Coach_SSN` INT NULL,
+  `Management_Name` VARCHAR(10) NOT NULL,
   `Salary` FLOAT NOT NULL,
   `ContractStart` DATE NOT NULL,
   `ContractEnd` DATE NOT NULL,
@@ -414,6 +384,11 @@ CREATE TABLE IF NOT EXISTS `Club_DB`.`Pro` (
     FOREIGN KEY (`Coach_SSN`)
     REFERENCES `Club_DB`.`Coach` (`Coach_SSN`)
     ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Pro_Management1`
+    FOREIGN KEY (`Management_Name`)
+    REFERENCES `Club_DB`.`Management` (`Name`)
+    ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
@@ -426,7 +401,7 @@ DROP TABLE IF EXISTS `Club_DB`.`Team` ;
 CREATE TABLE IF NOT EXISTS `Club_DB`.`Team` (
   `TeamName` VARCHAR(15) NOT NULL,
   `Coach_SSN` INT NOT NULL,
-  PRIMARY KEY (`TeamName`, `Coach_SSN`),
+  PRIMARY KEY (`TeamName`),
   CONSTRAINT `fk_Team_Coach1`
     FOREIGN KEY (`Coach_SSN`)
     REFERENCES `Club_DB`.`Coach` (`Coach_SSN`)
@@ -434,424 +409,177 @@ CREATE TABLE IF NOT EXISTS `Club_DB`.`Team` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
-USE `club_db` ;
 
 -- -----------------------------------------------------
--- Table `club_db`.`person`
+-- Data for table `Club_DB`.`Event`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `club_db`.`person` ;
+START TRANSACTION;
+USE `Club_DB`;
+INSERT INTO `Club_DB`.`Event` (`Name`, `Date`) VALUES ('Swimming Championship', '2023-12-23');
+INSERT INTO `Club_DB`.`Event` (`Name`, `Date`) VALUES ('FIFA Tournament', '2024-01-12');
+INSERT INTO `Club_DB`.`Event` (`Name`, `Date`) VALUES ('New Years Concert', '2023-12-31');
+INSERT INTO `Club_DB`.`Event` (`Name`, `Date`) VALUES ('Watch Party', '2024-03-01');
 
-CREATE TABLE IF NOT EXISTS `club_db`.`person` (
-  `SSN` INT(11) NOT NULL,
-  `FName` VARCHAR(12) NOT NULL,
-  `LName` VARCHAR(12) NOT NULL,
-  `Address` VARCHAR(50) NOT NULL,
-  `phone` CHAR(11) NOT NULL,
-  `BDATE` DATE NOT NULL,
-  `Email` VARCHAR(40) NOT NULL,
-  `Gender` CHAR(1) NOT NULL,
-  PRIMARY KEY (`SSN`))
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
+COMMIT;
 
 
 -- -----------------------------------------------------
--- Table `club_db`.`employee`
+-- Data for table `Club_DB`.`Sponsor`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `club_db`.`employee` ;
+START TRANSACTION;
+USE `Club_DB`;
+INSERT INTO `Club_DB`.`Sponsor` (`Name`, `Website`, `Event_Name`) VALUES ('Nike', 'Nike.com', 'Swimming Championship');
+INSERT INTO `Club_DB`.`Sponsor` (`Name`, `Website`, `Event_Name`) VALUES ('WE', 'te.eg', 'Fifa tournoment');
+INSERT INTO `Club_DB`.`Sponsor` (`Name`, `Website`, `Event_Name`) VALUES ('BanqueMisr', 'banquemisr.com', 'New Years Concert');
+INSERT INTO `Club_DB`.`Sponsor` (`Name`, `Website`, `Event_Name`) VALUES ('Watch It', 'watchit.com', 'Watch Party');
 
-CREATE TABLE IF NOT EXISTS `club_db`.`employee` (
-  `Salary` FLOAT NULL DEFAULT NULL,
-  `Employee_SSN` INT(11) NOT NULL,
-  PRIMARY KEY (`Employee_SSN`),
-  CONSTRAINT `fk_Employee_Perosn1`
-    FOREIGN KEY (`Employee_SSN`)
-    REFERENCES `club_db`.`person` (`SSN`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
+COMMIT;
 
 
 -- -----------------------------------------------------
--- Table `club_db`.`management`
+-- Data for table `Club_DB`.`Catering`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `club_db`.`management` ;
+START TRANSACTION;
+USE `Club_DB`;
+INSERT INTO `Club_DB`.`Catering` (`Name`, `Management_Name`, `NumOfBranches`, `Type`) VALUES ('Azure', 'Catering', 2, 'Restaurant');
+INSERT INTO `Club_DB`.`Catering` (`Name`, `Management_Name`, `NumOfBranches`, `Type`) VALUES ('Sail In Sea', 'Catering', 1, 'Restaurant');
+INSERT INTO `Club_DB`.`Catering` (`Name`, `Management_Name`, `NumOfBranches`, `Type`) VALUES ('Dominos', 'Catering', 1, 'Restaurant');
+INSERT INTO `Club_DB`.`Catering` (`Name`, `Management_Name`, `NumOfBranches`, `Type`) VALUES ('Buffalo Burger', 'Catering', 1, 'Restaurant');
+INSERT INTO `Club_DB`.`Catering` (`Name`, `Management_Name`, `NumOfBranches`, `Type`) VALUES ('Blaban', 'Catering', 1, 'Restaurant');
+INSERT INTO `Club_DB`.`Catering` (`Name`, `Management_Name`, `NumOfBranches`, `Type`) VALUES ('Vamos', 'Catering', 3, 'Cafe');
+INSERT INTO `Club_DB`.`Catering` (`Name`, `Management_Name`, `NumOfBranches`, `Type`) VALUES ('Costa Cafe', 'Catering', 1, 'Cafe');
 
-CREATE TABLE IF NOT EXISTS `club_db`.`management` (
-  `Name` VARCHAR(10) NOT NULL,
-  `NumberOfEmployees` INT(11) NOT NULL,
-  `Manager_SSN` INT(11) NOT NULL,
-  PRIMARY KEY (`Name`),
-  CONSTRAINT `fk_Management_Employee1`
-    FOREIGN KEY (`Manager_SSN`)
-    REFERENCES `club_db`.`employee` (`Employee_SSN`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
+COMMIT;
 
 
 -- -----------------------------------------------------
--- Table `club_db`.`catering`
+-- Data for table `Club_DB`.`Catering_Location`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `club_db`.`catering` ;
+START TRANSACTION;
+USE `Club_DB`;
+INSERT INTO `Club_DB`.`Catering_Location` (`Location`, `CateringName`, `Supervisor_ssn`) VALUES ('Main Club Building', 'Azure', 208);
+INSERT INTO `Club_DB`.`Catering_Location` (`Location`, `CateringName`, `Supervisor_ssn`) VALUES ('Food Court', 'Azure', 216);
+INSERT INTO `Club_DB`.`Catering_Location` (`Location`, `CateringName`, `Supervisor_ssn`) VALUES ('Food Court', 'Sail In Sea', 224);
+INSERT INTO `Club_DB`.`Catering_Location` (`Location`, `CateringName`, `Supervisor_ssn`) VALUES ('Food Court', 'Buffalo Burger', 238);
+INSERT INTO `Club_DB`.`Catering_Location` (`Location`, `CateringName`, `Supervisor_ssn`) VALUES ('Food Court', 'Dominos', 232);
+INSERT INTO `Club_DB`.`Catering_Location` (`Location`, `CateringName`, `Supervisor_ssn`) VALUES ('Poolside', 'Dolato', 244);
+INSERT INTO `Club_DB`.`Catering_Location` (`Location`, `CateringName`, `Supervisor_ssn`) VALUES ('Main Club Building', 'VAMOS', 249);
+INSERT INTO `Club_DB`.`Catering_Location` (`Location`, `CateringName`, `Supervisor_ssn`) VALUES ('Poolside', 'VAMOS', 254);
+INSERT INTO `Club_DB`.`Catering_Location` (`Location`, `CateringName`, `Supervisor_ssn`) VALUES ('Club Track', 'VAMOS', 259);
+INSERT INTO `Club_DB`.`Catering_Location` (`Location`, `CateringName`, `Supervisor_ssn`) VALUES ('Food Court', 'Costa Coffee', 267);
 
-CREATE TABLE IF NOT EXISTS `club_db`.`catering` (
-  `Name` VARCHAR(25) NOT NULL,
-  `Management_Name` VARCHAR(10) NOT NULL,
-  `NumOfBranches` INT(11) NOT NULL,
-  `Type` VARCHAR(10) NOT NULL,
-  PRIMARY KEY (`Name`),
-  CONSTRAINT `fk_Catering_Management1`
-    FOREIGN KEY (`Management_Name`)
-    REFERENCES `club_db`.`management` (`Name`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
-
-
--- -----------------------------------------------------
--- Table `club_db`.`catering_location`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `club_db`.`catering_location` ;
-
-CREATE TABLE IF NOT EXISTS `club_db`.`catering_location` (
-  `Location` VARCHAR(15) NOT NULL,
-  `Supervisor_ssn` INT(11) NOT NULL,
-  `Catering_Name` VARCHAR(25) NOT NULL,
-  PRIMARY KEY (`Location`, `Catering_Name`),
-  CONSTRAINT `ay_haga`
-    FOREIGN KEY (`Supervisor_ssn`)
-    REFERENCES `club_db`.`employee` (`Employee_SSN`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_Catering_Location_Catering1`
-    FOREIGN KEY (`Catering_Name`)
-    REFERENCES `club_db`.`catering` (`Name`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
+COMMIT;
 
 
 -- -----------------------------------------------------
--- Table `club_db`.`cateringstaff`
+-- Data for table `Club_DB`.`Place`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `club_db`.`cateringstaff` ;
+START TRANSACTION;
+USE `Club_DB`;
+INSERT INTO `Club_DB`.`Place` (`PlaceName`, `Location`) VALUES ('Main Football Field ', 'Sports Complex');
+INSERT INTO `Club_DB`.`Place` (`PlaceName`, `Location`) VALUES ('Indoor Sports Hall 1', 'Sports Complex Building');
+INSERT INTO `Club_DB`.`Place` (`PlaceName`, `Location`) VALUES ('Indoor Sports Hall 2', 'Sports Complex Building');
+INSERT INTO `Club_DB`.`Place` (`PlaceName`, `Location`) VALUES ('Poolside Lounge', 'Poolside');
+INSERT INTO `Club_DB`.`Place` (`PlaceName`, `Location`) VALUES ('Activity Hall 1', 'Main Club Building');
+INSERT INTO `Club_DB`.`Place` (`PlaceName`, `Location`) VALUES ('Activity Hall 2', 'Main Club Building');
+INSERT INTO `Club_DB`.`Place` (`PlaceName`, `Location`) VALUES ('Azure 1', 'Main Club Building');
+INSERT INTO `Club_DB`.`Place` (`PlaceName`, `Location`) VALUES ('VAMOS Trackside', 'Club Track');
+INSERT INTO `Club_DB`.`Place` (`PlaceName`, `Location`) VALUES ('Football Training Field 1', 'Sports Complex');
+INSERT INTO `Club_DB`.`Place` (`PlaceName`, `Location`) VALUES ('Football Training Field 2', 'Sports Complex');
+INSERT INTO `Club_DB`.`Place` (`PlaceName`, `Location`) VALUES ('Azure 2', 'Food Court');
+INSERT INTO `Club_DB`.`Place` (`PlaceName`, `Location`) VALUES ('Buffalo Burger', 'Food Court');
+INSERT INTO `Club_DB`.`Place` (`PlaceName`, `Location`) VALUES ('Domino\'s', 'Food Court');
+INSERT INTO `Club_DB`.`Place` (`PlaceName`, `Location`) VALUES ('Sail In Sea', 'Food Court');
+INSERT INTO `Club_DB`.`Place` (`PlaceName`, `Location`) VALUES ('Dolato', 'Poolside');
+INSERT INTO `Club_DB`.`Place` (`PlaceName`, `Location`) VALUES ('VAMOS Lounge', 'Main Club Building');
+INSERT INTO `Club_DB`.`Place` (`PlaceName`, `Location`) VALUES ('VAMOS Poolside', 'Poolside');
+INSERT INTO `Club_DB`.`Place` (`PlaceName`, `Location`) VALUES ('Costa Coffee', 'Food Court');
+INSERT INTO `Club_DB`.`Place` (`PlaceName`, `Location`) VALUES ('5on5 Football Field 1', 'Sports Complex');
+INSERT INTO `Club_DB`.`Place` (`PlaceName`, `Location`) VALUES ('5on5 Football Field 2', 'Sports Complex');
+INSERT INTO `Club_DB`.`Place` (`PlaceName`, `Location`) VALUES ('5on5 Football Field 3', 'Sports Complex');
 
-CREATE TABLE IF NOT EXISTS `club_db`.`cateringstaff` (
-  `Worker_SSN` INT(11) NOT NULL,
-  `Catering_Location` VARCHAR(15) NOT NULL,
-  `Catering_Location_Name` VARCHAR(25) NOT NULL,
-  PRIMARY KEY (`Worker_SSN`),
-  CONSTRAINT `fk_CateringStaff_Catering_Location1`
-    FOREIGN KEY (`Catering_Location` , `Catering_Location_Name`)
-    REFERENCES `club_db`.`catering_location` (`Location` , `Catering_Name`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_table1_Employee1`
-    FOREIGN KEY (`Worker_SSN`)
-    REFERENCES `club_db`.`employee` (`Employee_SSN`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
-
-
--- -----------------------------------------------------
--- Table `club_db`.`coach`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `club_db`.`coach` ;
-
-CREATE TABLE IF NOT EXISTS `club_db`.`coach` (
-  `StartDateCoaching` DATE NOT NULL,
-  `Coach_SSN` INT(11) NOT NULL,
-  PRIMARY KEY (`Coach_SSN`),
-  CONSTRAINT `fk_Coach_Employee1`
-    FOREIGN KEY (`Coach_SSN`)
-    REFERENCES `club_db`.`employee` (`Employee_SSN`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
+COMMIT;
 
 
 -- -----------------------------------------------------
--- Table `club_db`.`event`
+-- Data for table `Club_DB`.`Hall`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `club_db`.`event` ;
+START TRANSACTION;
+USE `Club_DB`;
+INSERT INTO `Club_DB`.`Hall` (`PlaceName`, `NumberOfSeats`) VALUES ('Indoor Sports Hall 1', 2000);
+INSERT INTO `Club_DB`.`Hall` (`PlaceName`, `NumberOfSeats`) VALUES ('Indoor Sports Hall 2', 600);
+INSERT INTO `Club_DB`.`Hall` (`PlaceName`, `NumberOfSeats`) VALUES ('Activity Hall 1', 100);
+INSERT INTO `Club_DB`.`Hall` (`PlaceName`, `NumberOfSeats`) VALUES ('Activity Hall 2', 100);
 
-CREATE TABLE IF NOT EXISTS `club_db`.`event` (
-  `Name` VARCHAR(45) NOT NULL,
-  `Date` DATE NULL DEFAULT NULL,
-  PRIMARY KEY (`Name`))
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
-
-
--- -----------------------------------------------------
--- Table `club_db`.`place`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `club_db`.`place` ;
-
-CREATE TABLE IF NOT EXISTS `club_db`.`place` (
-  `Location` VARCHAR(15) NOT NULL,
-  `PlaceName` VARCHAR(15) NOT NULL,
-  PRIMARY KEY (`PlaceName`))
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
+COMMIT;
 
 
 -- -----------------------------------------------------
--- Table `club_db`.`event_managment_place`
+-- Data for table `Club_DB`.`Field`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `club_db`.`event_managment_place` ;
+START TRANSACTION;
+USE `Club_DB`;
+INSERT INTO `Club_DB`.`Field` (`PlaceName`, `Area`) VALUES ('Main Football Field ', 7140);
+INSERT INTO `Club_DB`.`Field` (`PlaceName`, `Area`) VALUES ('Football Training Field 1', 5000);
+INSERT INTO `Club_DB`.`Field` (`PlaceName`, `Area`) VALUES ('Football Training Field 2', 5000);
+INSERT INTO `Club_DB`.`Field` (`PlaceName`, `Area`) VALUES ('Club Track', 1117.51);
+INSERT INTO `Club_DB`.`Field` (`PlaceName`, `Area`) VALUES ('5on5 Football Field 1', 800);
+INSERT INTO `Club_DB`.`Field` (`PlaceName`, `Area`) VALUES ('5on5 Football Field 2', 800);
+INSERT INTO `Club_DB`.`Field` (`PlaceName`, `Area`) VALUES ('5on5 Football Field 3', 800);
 
-CREATE TABLE IF NOT EXISTS `club_db`.`event_managment_place` (
-  `Management_Name` VARCHAR(10) NOT NULL,
-  `PlaceName` VARCHAR(15) NOT NULL,
-  `Event_Name` VARCHAR(45) NOT NULL,
-  PRIMARY KEY (`Management_Name`, `PlaceName`, `Event_Name`),
-  CONSTRAINT `fk_table3_Event1`
-    FOREIGN KEY (`Event_Name`)
-    REFERENCES `club_db`.`event` (`Name`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_table3_Management1`
-    FOREIGN KEY (`Management_Name`)
-    REFERENCES `club_db`.`management` (`Name`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_table3_Place1`
-    FOREIGN KEY (`PlaceName`)
-    REFERENCES `club_db`.`place` (`PlaceName`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
+COMMIT;
 
 
 -- -----------------------------------------------------
--- Table `club_db`.`field`
+-- Data for table `Club_DB`.`Menu`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `club_db`.`field` ;
+START TRANSACTION;
+USE `Club_DB`;
+INSERT INTO `Club_DB`.`Menu` (`Catering_Name`, `Item`, `Price`) VALUES ('Azure', 'Kofta', 180.0);
+INSERT INTO `Club_DB`.`Menu` (`Catering_Name`, `Item`, `Price`) VALUES ('Azure', 'Shish Tawook', 164.0);
+INSERT INTO `Club_DB`.`Menu` (`Catering_Name`, `Item`, `Price`) VALUES ('Azure', 'Grilled Chicken', 118.0);
+INSERT INTO `Club_DB`.`Menu` (`Catering_Name`, `Item`, `Price`) VALUES ('Azure', 'Alfredo Pasta', 100.0);
+INSERT INTO `Club_DB`.`Menu` (`Catering_Name`, `Item`, `Price`) VALUES ('Azure', 'Mushroom Cream Soup', 39.5);
+INSERT INTO `Club_DB`.`Menu` (`Catering_Name`, `Item`, `Price`) VALUES ('sail in sea', 'Shrimp Pasta', 125.0);
+INSERT INTO `Club_DB`.`Menu` (`Catering_Name`, `Item`, `Price`) VALUES ('sail in sea', 'Fried Shrimp Sandwich', 80.0);
+INSERT INTO `Club_DB`.`Menu` (`Catering_Name`, `Item`, `Price`) VALUES ('sail in sea', 'seafood soup', 65.0);
+INSERT INTO `Club_DB`.`Menu` (`Catering_Name`, `Item`, `Price`) VALUES ('sail in sea', 'panne sandwich', 49.0);
+INSERT INTO `Club_DB`.`Menu` (`Catering_Name`, `Item`, `Price`) VALUES ('sail in sea', 'caviar salad', 30.0);
+INSERT INTO `Club_DB`.`Menu` (`Catering_Name`, `Item`, `Price`) VALUES ('Dominos', 'pepperoni pizza', 150.0);
+INSERT INTO `Club_DB`.`Menu` (`Catering_Name`, `Item`, `Price`) VALUES ('Dominos', 'margherita pizza', 100.0);
+INSERT INTO `Club_DB`.`Menu` (`Catering_Name`, `Item`, `Price`) VALUES ('Dominos', 'Chicken ranch pizza', 135.0);
+INSERT INTO `Club_DB`.`Menu` (`Catering_Name`, `Item`, `Price`) VALUES ('Dominos', 'Chicken BBQ Pizza', 140.0);
+INSERT INTO `Club_DB`.`Menu` (`Catering_Name`, `Item`, `Price`) VALUES ('Dominos', 'Veggie Pizza', 110.0);
+INSERT INTO `Club_DB`.`Menu` (`Catering_Name`, `Item`, `Price`) VALUES ('Buffalo', 'Mushroom burger', 90.0);
+INSERT INTO `Club_DB`.`Menu` (`Catering_Name`, `Item`, `Price`) VALUES ('Buffalo', 'Bacon Burger', 105.0);
+INSERT INTO `Club_DB`.`Menu` (`Catering_Name`, `Item`, `Price`) VALUES ('Buffalo', 'Cheese Burger', 80.0);
+INSERT INTO `Club_DB`.`Menu` (`Catering_Name`, `Item`, `Price`) VALUES ('Buffalo', 'Chicken Burger', 90.0);
+INSERT INTO `Club_DB`.`Menu` (`Catering_Name`, `Item`, `Price`) VALUES ('Buffalo', 'Cheese Fries', 35.0);
+INSERT INTO `Club_DB`.`Menu` (`Catering_Name`, `Item`, `Price`) VALUES ('Dolato', 'Bubble Waffle', 35.0);
+INSERT INTO `Club_DB`.`Menu` (`Catering_Name`, `Item`, `Price`) VALUES ('Dolato', 'Tiramisu', 50.0);
+INSERT INTO `Club_DB`.`Menu` (`Catering_Name`, `Item`, `Price`) VALUES ('Dolato', 'Frozen Yogurt', 34.0);
+INSERT INTO `Club_DB`.`Menu` (`Catering_Name`, `Item`, `Price`) VALUES ('Dolato', 'Gelato', 30.0);
+INSERT INTO `Club_DB`.`Menu` (`Catering_Name`, `Item`, `Price`) VALUES ('Dolato', 'Cheesecake', 40.0);
+INSERT INTO `Club_DB`.`Menu` (`Catering_Name`, `Item`, `Price`) VALUES ('VAMOS', 'Turkish coffee', 12.0);
+INSERT INTO `Club_DB`.`Menu` (`Catering_Name`, `Item`, `Price`) VALUES ('VAMOS', 'Tea', 8.5);
+INSERT INTO `Club_DB`.`Menu` (`Catering_Name`, `Item`, `Price`) VALUES ('VAMOS', 'Anise', 10.0);
+INSERT INTO `Club_DB`.`Menu` (`Catering_Name`, `Item`, `Price`) VALUES ('VAMOS', 'BBQ Chicken Sandwich', 74.0);
+INSERT INTO `Club_DB`.`Menu` (`Catering_Name`, `Item`, `Price`) VALUES ('VAMOS', 'French Coffee', 20.0);
+INSERT INTO `Club_DB`.`Menu` (`Catering_Name`, `Item`, `Price`) VALUES ('VAMOS', 'Breakfast Sandwich', 16.0);
+INSERT INTO `Club_DB`.`Menu` (`Catering_Name`, `Item`, `Price`) VALUES ('VAMOS', 'Fresh Juice', 33.0);
+INSERT INTO `Club_DB`.`Menu` (`Catering_Name`, `Item`, `Price`) VALUES ('Costa Cafe', 'Croissant', 25.0);
+INSERT INTO `Club_DB`.`Menu` (`Catering_Name`, `Item`, `Price`) VALUES ('Costa Cafe', 'Ice coffee', 45.0);
+INSERT INTO `Club_DB`.`Menu` (`Catering_Name`, `Item`, `Price`) VALUES ('Costa Cafe', 'espresso', 25.0);
+INSERT INTO `Club_DB`.`Menu` (`Catering_Name`, `Item`, `Price`) VALUES ('Costa Cafe', 'Club Sandwich', 65.0);
+INSERT INTO `Club_DB`.`Menu` (`Catering_Name`, `Item`, `Price`) VALUES ('Costa Cafe', 'Cappuccino', 40.0);
+INSERT INTO `Club_DB`.`Menu` (`Catering_Name`, `Item`, `Price`) VALUES ('Azure', 'Tehina', 20.0);
+INSERT INTO `Club_DB`.`Menu` (`Catering_Name`, `Item`, `Price`) VALUES ('Azure', 'Cesar Salad', 45.0);
+INSERT INTO `Club_DB`.`Menu` (`Catering_Name`, `Item`, `Price`) VALUES ('Azure', 'Rice', 18.0);
+INSERT INTO `Club_DB`.`Menu` (`Catering_Name`, `Item`, `Price`) VALUES ('Azure', 'Molokhia', 45.0);
+INSERT INTO `Club_DB`.`Menu` (`Catering_Name`, `Item`, `Price`) VALUES ('Azure', 'Fahita Sandwich', 50.0);
+INSERT INTO `Club_DB`.`Menu` (`Catering_Name`, `Item`, `Price`) VALUES ('Azure', 'French Fries', 26.0);
 
-CREATE TABLE IF NOT EXISTS `club_db`.`field` (
-  `Area` FLOAT NOT NULL,
-  `PlaceName` VARCHAR(15) NOT NULL,
-  PRIMARY KEY (`PlaceName`),
-  CONSTRAINT `fk_Field_Place1`
-    FOREIGN KEY (`PlaceName`)
-    REFERENCES `club_db`.`place` (`PlaceName`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
-
-
--- -----------------------------------------------------
--- Table `club_db`.`hall`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `club_db`.`hall` ;
-
-CREATE TABLE IF NOT EXISTS `club_db`.`hall` (
-  `NumberOfSeats` INT(11) NOT NULL,
-  `PlaceName` VARCHAR(15) NOT NULL,
-  PRIMARY KEY (`PlaceName`),
-  CONSTRAINT `fk_Hall_Place1`
-    FOREIGN KEY (`PlaceName`)
-    REFERENCES `club_db`.`place` (`PlaceName`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
-
-
--- -----------------------------------------------------
--- Table `club_db`.`member`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `club_db`.`member` ;
-
-CREATE TABLE IF NOT EXISTS `club_db`.`member` (
-  `MembershipStartDate` DATE NOT NULL,
-  `Member_SSN` INT(11) NOT NULL,
-  PRIMARY KEY (`Member_SSN`),
-  CONSTRAINT `fk_Member_Perosn`
-    FOREIGN KEY (`Member_SSN`)
-    REFERENCES `club_db`.`person` (`SSN`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
-
-
--- -----------------------------------------------------
--- Table `club_db`.`pro_player`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `club_db`.`pro_player` ;
-
-CREATE TABLE IF NOT EXISTS `club_db`.`pro_player` (
-  `Salary` FLOAT NOT NULL,
-  `SportName` VARCHAR(15) NOT NULL,
-  `Player_SSN` INT(11) NOT NULL,
-  PRIMARY KEY (`Player_SSN`),
-  CONSTRAINT `fk_Player_Member1`
-    FOREIGN KEY (`Player_SSN`)
-    REFERENCES `club_db`.`member` (`Member_SSN`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
-
-
--- -----------------------------------------------------
--- Table `club_db`.`individualsport_player`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `club_db`.`individualsport_player` ;
-
-CREATE TABLE IF NOT EXISTS `club_db`.`individualsport_player` (
-  `Player_SSN` INT(11) NOT NULL,
-  `Coach_SSN` INT(11) NOT NULL,
-  PRIMARY KEY (`Player_SSN`),
-  CONSTRAINT `fk_individual sport - player_Coach1`
-    FOREIGN KEY (`Coach_SSN`)
-    REFERENCES `club_db`.`coach` (`Coach_SSN`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_individual sport - player_Player1`
-    FOREIGN KEY (`Player_SSN`)
-    REFERENCES `club_db`.`pro_player` (`Player_SSN`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
-
-
--- -----------------------------------------------------
--- Table `club_db`.`management_employee`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `club_db`.`management_employee` ;
-
-CREATE TABLE IF NOT EXISTS `club_db`.`management_employee` (
-  `Management_Name` VARCHAR(10) NOT NULL,
-  `Employee_SSN` INT(11) NOT NULL,
-  PRIMARY KEY (`Management_Name`, `Employee_SSN`),
-  CONSTRAINT `fk_Management_Employee_Employee1`
-    FOREIGN KEY (`Employee_SSN`)
-    REFERENCES `club_db`.`employee` (`Employee_SSN`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_table2_Management1`
-    FOREIGN KEY (`Management_Name`)
-    REFERENCES `club_db`.`management` (`Name`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
-
-
--- -----------------------------------------------------
--- Table `club_db`.`menu`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `club_db`.`menu` ;
-
-CREATE TABLE IF NOT EXISTS `club_db`.`menu` (
-  `optionNumber` INT(11) NOT NULL,
-  `option` VARCHAR(20) NOT NULL,
-  `Catering_Name` VARCHAR(25) NOT NULL,
-  PRIMARY KEY (`optionNumber`),
-  CONSTRAINT `fk_Menu_Catering1`
-    FOREIGN KEY (`Catering_Name`)
-    REFERENCES `club_db`.`catering` (`Name`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
-
-
--- -----------------------------------------------------
--- Table `club_db`.`menu-opsize`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `club_db`.`menu-opsize` ;
-
-CREATE TABLE IF NOT EXISTS `club_db`.`menu-opsize` (
-  `Menu_optionNumber` INT(11) NOT NULL,
-  `Size` VARCHAR(1) NOT NULL,
-  `Price` FLOAT NULL DEFAULT NULL,
-  CONSTRAINT `fk_Menu-OpSize_Menu1`
-    FOREIGN KEY (`Menu_optionNumber`)
-    REFERENCES `club_db`.`menu` (`optionNumber`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
-
-
--- -----------------------------------------------------
--- Table `club_db`.`sponsor`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `club_db`.`sponsor` ;
-
-CREATE TABLE IF NOT EXISTS `club_db`.`sponsor` (
-  `Name` VARCHAR(15) NOT NULL,
-  `Website` VARCHAR(20) NULL DEFAULT NULL,
-  `Event_Name` VARCHAR(45) NOT NULL,
-  PRIMARY KEY (`Name`),
-  CONSTRAINT `fk_Sponsor_Event1`
-    FOREIGN KEY (`Event_Name`)
-    REFERENCES `club_db`.`event` (`Name`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
-
-
--- -----------------------------------------------------
--- Table `club_db`.`team`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `club_db`.`team` ;
-
-CREATE TABLE IF NOT EXISTS `club_db`.`team` (
-  `TeamName` VARCHAR(15) NOT NULL,
-  `Coach_SSN` INT(11) NOT NULL,
-  PRIMARY KEY (`TeamName`),
-  CONSTRAINT `fk_Team_Coach1`
-    FOREIGN KEY (`Coach_SSN`)
-    REFERENCES `club_db`.`coach` (`Coach_SSN`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
-
-
--- -----------------------------------------------------
--- Table `club_db`.`teamsport_player`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `club_db`.`teamsport_player` ;
-
-CREATE TABLE IF NOT EXISTS `club_db`.`teamsport_player` (
-  `Player_SSN` INT(11) NOT NULL,
-  `TeamName` VARCHAR(15) NOT NULL,
-  PRIMARY KEY (`Player_SSN`),
-  CONSTRAINT `fk_Team sport - player_Player1`
-    FOREIGN KEY (`Player_SSN`)
-    REFERENCES `club_db`.`pro_player` (`Player_SSN`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_TeamSport_player_Team1`
-    FOREIGN KEY (`TeamName`)
-    REFERENCES `club_db`.`team` (`TeamName`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
-
-
-SET SQL_MODE=@OLD_SQL_MODE;
-SET FOREIGN_KEY_CHECKS=0;
-SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+COMMIT;
 
 INSERT INTO Person (SSN, Fname, Lname, Address, Phone, Bdate, Gender, Email) VALUES
  (1, "Omar", "Khalil", "100 Baghdad, Heliopolis, Cairo", "01505829637", "1995-04-25", "M", "OmarKhalil93@gmail.com"),
@@ -1540,7 +1268,7 @@ INSERT INTO Person (SSN, Fname, Lname, Address, Phone, Bdate, Gender, Email) VAL
 (199, "Noureen", "Farag", "21 Shaheen, Al Doqi, Giza", "01546937018", "1976-07-16", "F", "NoureenFarag178@hotmail.com"),
 (200, "Nour", "Magdy", "51 Baghdad, Heliopolis, Cairo", "01559243876", "1970-04-11", "F", "NourMagdy25@outlook.com");
 INSERT INTO member (Member_SSN, MembershipStartDate) VALUES
- (115, "2010-02-15"),
+(115, "2010-02-15"),
 (116, "2008-11-10"),
 (117, "2011-06-05"),
 (118, "2015-05-08"),
@@ -1710,3 +1438,211 @@ INSERT INTO Employee (salary,Employee_SSN) VALUES
 (188600,150),
 (178000,151),
 (167000,152);
+INSERT INTO Person (SSN, Fname, Lname, Address, Phone, Bdate, Gender, Email) VALUES
+(201, "Amal", "Salah", "62 Talaat Harb, Downtown, Cairo", "01109418362", "1996-02-03", "F", "AmalSalah222@hotmail.com"),
+(202, "Amir", "Magdy", "14 Gamal Abdel Nasser, Al-Salam, Cairo", "01086172493", "1996-06-27", "M", "AmirMagdy132@outlook.com"),
+(203, "Kareem", "Emad", "27 9 St., Maadi, Cairo", "01595728604", "1997-02-10", "M", "KareemEmad161@gmail.com"),
+(204, "Esraa", "Salah", "50 Adly, Downtown, Cairo", "01062398750", "1997-08-13", "F", "EsraaSalah285@gmail.com"),
+(205, "Sherif", "Salah", "59 Champeleon, Downtown, Cairo", "01295410236", "1995-05-08", "M", "SherifSalah197@gmail.com"),
+(206, "Amani", "Salah", "17 Gamal Abdel Nasser, Al-Salam, Cairo", "01151963780", "1997-07-28", "F", "AmaniSalah288@outlook.com"),
+(207, "Mahmoud", "Fawzi", "60 Al Nahda, Maadi, Cairo", "01213724580", "1995-05-09", "M", "MahmoudFawzi330@outlook.com"),
+(208, "Rashad", "Ezzat", "34 28St. ,ElTahrir City, Imbaba, Giza", "01549612573", "1997-09-16", "M", "RashadEzzat155@gmail.com"),
+(209, "Shahd", "Khalil", "11 Al Teraa Al Boulakeya, Shobra, Cairo", "01049752831", "2003-09-14", "F", "ShahdKhalil59@outlook.com"),
+(210, "Nada", "Adel", "88 Hassan Assem, Zamalek, Cairo", "01106431728", "2000-04-22", "F", "NadaAdel15@gmail.com"),
+(211, "Salma", "Fawzi", "80 Al Saad Al Aaly, Maadi, Cairo", "01520746385", "1995-04-20", "F", "SalmaFawzi251@outlook.com"),
+(212, "Nour", "Hani", "22 Gamal Abdel Nasser, Al-Salam, Cairo", "01563594827", "1995-02-03", "F", "NourHani284@gmail.com"),
+(213, "Sherif", "Magdy", "28 Doletyan, Shobra, Cairo", "01598065173", "2003-08-18", "M", "SherifMagdy85@outlook.com"),
+(214, "Hager", "Waleed", "35 Baghdad, Heliopolis, Cairo", "01090283674", "2002-04-19", "F", "HagerWaleed267@outlook.com"),
+(215, "Rashad", "Magdy", "49 15 May, Shobra, Cairo", "01095103278", "1999-07-07", "M", "RashadMagdy382@outlook.com"),
+(216, "Mariam", "Nader", "18 El Sadat, Al-Salam, Cairo", "01514386972", "1996-02-23", "F", "MariamNader348@hotmail.com"),
+(217, "Kareem", "Emad", "86 Gamal Abdel Nasser, Al-Salam, Cairo", "01252891067", "2003-08-12", "M", "KareemEmad191@hotmail.com"),
+(218, "Abdallah", "Khalil", "25 151 St., Maadi, Cairo", "01201523849", "1998-09-14", "M", "AbdallahKhalil132@hotmail.com"),
+(219, "Ali", "Sayed", "75 Al Nahda, Maadi, Cairo", "01272385941", "2000-08-12", "M", "AliSayed108@outlook.com"),
+(220, "Ali", "Khalil", "64 Gad Eid, Al Doqi, Giza", "01576450928", "1999-11-18", "M", "AliKhalil296@outlook.com"),
+(221, "Hana", "Ghanim", "93 26 July St, Downtown, Cairo", "01115743082", "1996-06-13", "F", "HanaGhanim305@gmail.com"),
+(222, "Nourhan", "Ghanim", "5 Hassan Ramadan, Al Doqi, Giza", "01128395706", "1995-01-01", "F", "NourhanGhanim51@gmail.com"),
+(223, "Noureen", "Khalil", "9 Al Saad Al Aaly, Maadi, Cairo", "01294537810", "2001-09-14", "F", "NoureenKhalil272@outlook.com"),
+(224, "Sherif", "Khaled", "11 18St. , ElTahrir City, Imbaba, Giza", "01180476219", "2001-06-25", "M", "SherifKhaled299@outlook.com"),
+(225, "Aya", "Salah", "41 Al Kanal, Maadi, Cairo", "01518049325", "2001-05-07", "F", "AyaSalah188@gmail.com"),
+(226, "Rashad", "Sayed", "52 El Sadat, Al-Salam, Cairo", "01280365974", "2000-03-28", "M", "RashadSayed296@outlook.com"),
+(227, "Ehab", "Zakaria", "10 Al Hegaz, Heliopolis, Cairo", "01167935201", "1994-06-19", "M", "EhabZakaria117@outlook.com"),
+(228, "Mahmoud", "Ashraf", "52 Damascus, Maadi, Cairo", "01116457098", "1998-08-14", "M", "MahmoudAshraf371@hotmail.com"),
+(229, "Yara", "Fawzi", "29 Hassan Sabry, Zamalek, Cairo", "01130761489", "2003-12-20", "F", "YaraFawzi112@gmail.com"),
+(230, "Ahmed", "Zakaria", "6 Al Nozha, Heliopolis, Cairo", "01508436179", "1997-11-03", "M", "AhmedZakaria306@gmail.com"),
+(231, "Esraa", "Hani", "14 Gamal Abdel Nasser, Al-Salam, Cairo", "01594281065", "2000-04-03", "F", "EsraaHani75@gmail.com"),
+(232, "Rashad", "Khaled", "13 El Tahrir, Downtown, Cairo", "01002187936", "2001-04-13", "M", "RashadKhaled249@gmail.com"),
+(233, "Hager", "Ezzat", "98 Shobra St., Shobra, Cairo", "01028390457", "1996-11-16", "F", "HagerEzzat415@outlook.com"),
+(234, "Mahmoud", "Emad", "58 Al Nadi, Maadi, Cairo", "01291287054", "2001-10-08", "M", "MahmoudEmad87@hotmail.com"),
+(235, "Esraa", "Yaser", "18 Shagaret Al Dor, Zamalek, Cairo", "01575491368", "1997-03-08", "F", "EsraaYaser183@gmail.com"),
+(236, "Toaa", "Magdy", "8 Gad Eid, Al Doqi, Giza", "01202786315", "1994-08-06", "F", "ToaaMagdy346@hotmail.com"),
+(237, "Zeyad", "Emad", "36 Doletyan, Shobra, Cairo", "01592134867", "1998-11-15", "M", "ZeyadEmad102@hotmail.com"),
+(238, "Amr", "Khaled", "7 Talaat Harb, Imbaba, Giza", "01572619508", "2003-06-08", "M", "AmrKhaled53@gmail.com"),
+(239, "Toaa", "Sayed", "59 Adly, Downtown, Cairo", "01510956782", "1999-12-03", "F", "ToaaSayed280@hotmail.com"),
+(240, "Esraa", "Nader", "55 Bahgat Ali, Zamalek, Cairo", "01149208536", "1996-01-28", "F", "EsraaNader270@outlook.com"),
+(241, "Abdelrahman", "Khaled", "95 Sherif, Downtown, Cairo", "01007524813", "1996-03-17", "M", "AbdelrahmanKhaled274@gmail.com"),
+(242, "Sherif", "Adel", "41 Oraby, Maadi, Cairo", "01153026147", "1995-11-04", "M", "SherifAdel335@outlook.com"),
+(243, "Mariam", "Hassan", "90 Al Ahram, Heliopolis, Cairo", "01056734902", "2003-06-20", "F", "MariamHassan390@outlook.com"),
+(244, "Nour", "Ezzat", "42 Hassan Sabry, Zamalek, Cairo", "01284013697", "1995-12-16", "F", "NourEzzat256@outlook.com"),
+(245, "Eman", "Magdy", "18 Champeleon, Downtown, Cairo", "01591865047", "2000-02-14", "F", "EmanMagdy285@hotmail.com"),
+(246, "Nourhan", "Hani", "83 Al Merghany, Heliopolis, Cairo", "01087016529", "1998-08-18", "F", "NourhanHani25@outlook.com"),
+(247, "Mohamed", "Waleed", "97 Gad Eid, Al Doqi, Giza", "01025781630", "1996-01-10", "M", "MohamedWaleed129@hotmail.com"),
+(248, "Shahd", "Sobhi", "35 Champeleon, Downtown, Cairo", "01043501928", "2000-04-12", "F", "ShahdSobhi253@hotmail.com"),
+(249, "Mahmoud", "Fawzi", "82 Gad Eid, Al Doqi, Giza", "01238540619", "2002-11-22", "M", "MahmoudFawzi17@hotmail.com"),
+(250, "Marawan", "Khaled", "14 kamal Al Tawil, Zamalek, Cairo", "01028369701", "1996-01-08", "M", "MarawanKhaled42@hotmail.com"),
+(251, "Mostafa", "Sayed", "84 Baghdad, Heliopolis, Cairo", "01527196345", "2000-08-11", "M", "MostafaSayed352@outlook.com"),
+(252, "Rashad", "Sayed", "100 Al Teraa Al Boulakeya, Shobra, Cairo", "01268720951", "2001-10-11", "M", "RashadSayed129@hotmail.com"),
+(253, "Mohamed", "Hani", "28 9 St., Maadi, Cairo", "01249702683", "1995-11-27", "M", "MohamedHani241@outlook.com"),
+(254, "Ali", "Farag", "88 15 May, Shobra, Cairo", "01579451236", "2001-07-14", "M", "AliFarag372@hotmail.com"),
+(255, "Aya", "Salah", "26 Gad Eid, Al Doqi, Giza", "01109348625", "1997-10-04", "F", "AyaSalah92@hotmail.com"),
+(256, "Ali", "Mohamed", "29 Mamdouh Salem, Imbaba, Giza", "01538967540", "1995-01-25", "M", "AliMohamed163@gmail.com"),
+(257, "Abdalaziz", "Ezzat", "78 Baghdad, Heliopolis, Cairo", "01185710924", "1998-08-21", "M", "AbdalazizEzzat71@hotmail.com"),
+(258, "Haytham", "Nader", "33 18St. , ElTahrir City, Imbaba, Giza", "01217896502", "1999-02-28", "M", "HaythamNader294@gmail.com"),
+(259, "Mostafa", "Sayed", "86 Al Merghany, Heliopolis, Cairo", "01023904786", "1997-09-18", "M", "MostafaSayed145@outlook.com"),
+(260, "Amani", "Hassan", "84 Al Nadi, Maadi, Cairo", "01254670398", "1994-01-09", "F", "AmaniHassan177@gmail.com"),
+(261, "Mahmoud", "Ashraf", "65 Shaheen, Al Doqi, Giza", "01280927364", "1997-07-18", "M", "MahmoudAshraf65@outlook.com"),
+(262, "Ibrahim", "Ashraf", "13 Shobra St., Shobra, Cairo", "01297483512", "2003-12-16", "M", "IbrahimAshraf141@hotmail.com"),
+(263, "Amal", "Ashraf", "90 Doletyan, Shobra, Cairo", "01102597134", "1994-08-20", "F", "AmalAshraf113@outlook.com"),
+(264, "Aya", "Hassan", "98 Gamal Abdel Nasser, Al-Salam, Cairo", "01562597381", "2002-02-28", "F", "AyaHassan156@outlook.com"),
+(265, "Hager", "Emad", "100 Hassan Ramadan, Al Doqi, Giza", "01292716043", "1999-04-01", "F", "HagerEmad313@gmail.com"),
+(266, "Eyad", "Khalil", "64 Gamal Abdel Nasser, Al-Salam, Cairo", "01094561237", "1994-01-20", "M", "EyadKhalil381@gmail.com"),
+(267, "Amani", "Emad", "82 Hassan Assem, Zamalek, Cairo", "01043097162", "1997-03-28", "F", "AmaniEmad152@outlook.com");
+INSERT INTO employee (Employee_SSN,Salary) VALUES
+(201,50014),
+(202,52358),
+(203,52213),
+(204,52513),
+(205,52532),
+(206,49880),
+(207,54920),
+(208,90000),
+(209,52118),
+(210,51135),
+(211,48826),
+(212,50144),
+(213,52281),
+(214,51642),
+(215,52862),
+(216,90000),
+(217,49044),
+(218,54482),
+(219,50147),
+(220,49752),
+(221,53561),
+(222,52766),
+(223,52935),
+(224,87500),
+(225,51668),
+(226,53573),
+(227,49987),
+(228,53104),
+(229,50778),
+(230,48312),
+(231,48638),
+(232,90000),
+(233,48394),
+(234,53354),
+(235,54066),
+(236,50447),
+(237,48486),
+(238,87500),
+(239,49813),
+(240,49365),
+(241,53241),
+(242,48523),
+(243,48380),
+(244,88000),
+(245,54032),
+(246,50613),
+(247,53402),
+(248,54106),
+(249,82500),
+(250,49879),
+(251,49150),
+(252,54024),
+(253,50835),
+(254,82500),
+(255,48600),
+(256,49076),
+(257,48299),
+(258,49161),
+(259,82500),
+(260,53354),
+(261,50037),
+(262,48907),
+(263,51407),
+(264,49817),
+(265,54576),
+(266,54773),
+(267,87600);
+INSERT INTO CateringStaff (Worker_SSN,Catering_Name,Catering_Location) VALUES
+(201,'Azure','Main Club Building'),
+(202,'Azure','Main Club Building'),
+(203,'Azure','Main Club Building'),
+(204,'Azure','Main Club Building'),
+(205,'Azure','Main Club Building'),
+(206,'Azure','Main Club Building'),
+(207,'Azure','Main Club Building'),
+(208,'Azure','Main Club Building'),
+(209,'Azure','Food Court'),
+(210,'Azure','Food Court'),
+(211,'Azure','Food Court'),
+(212,'Azure','Food Court'),
+(213,'Azure','Food Court'),
+(214,'Azure','Food Court'),
+(215,'Azure','Food Court'),
+(216,'Azure','Food Court'),
+(217,'Sail In Sea','Food Court'),
+(218,'Sail In Sea','Food Court'),
+(219,'Sail In Sea','Food Court'),
+(220,'Sail In Sea','Food Court'),
+(221,'Sail In Sea','Food Court'),
+(222,'Sail In Sea','Food Court'),
+(223,'Sail In Sea','Food Court'),
+(224,'Sail In Sea','Food Court'),
+(225,'Dominos','Food Court'),
+(226,'Dominos','Food Court'),
+(227,'Dominos','Food Court'),
+(228,'Dominos','Food Court'),
+(229,'Dominos','Food Court'),
+(230,'Dominos','Food Court'),
+(231,'Dominos','Food Court'),
+(232,'Dominos','Food Court'),
+(233,'Buffalo Burger','Food Court'),
+(234,'Buffalo Burger','Food Court'),
+(235,'Buffalo Burger','Food Court'),
+(236,'Buffalo Burger','Food Court'),
+(237,'Buffalo Burger','Food Court'),
+(238,'Buffalo Burger','Food Court'),
+(239,'Dolato','Poolside'),
+(240,'Dolato','Poolside'),
+(241,'Dolato','Poolside'),
+(242,'Dolato','Poolside'),
+(243,'Dolato','Poolside'),
+(244,'Dolato','Poolside'),
+(245,'VAMOS','Main Club Building'),
+(246,'VAMOS','Main Club Building'),
+(247,'VAMOS','Main Club Building'),
+(248,'VAMOS','Main Club Building'),
+(249,'VAMOS','Main Club Building'),
+(250,'VAMOS','Poolside'),
+(251,'VAMOS','Poolside'),
+(252,'VAMOS','Poolside'),
+(253,'VAMOS','Poolside'),
+(254,'VAMOS','Poolside'),
+(255,'VAMOS','Club Track'),
+(256,'VAMOS','Club Track'),
+(257,'VAMOS','Club Track'),
+(258,'VAMOS','Club Track'),
+(259,'VAMOS','Club Track'),
+(260,'Costa Coffee','Food Court'),
+(261,'Costa Coffee','Food Court'),
+(262,'Costa Coffee','Food Court'),
+(263,'Costa Coffee','Food Court'),
+(264,'Costa Coffee','Food Court'),
+(265,'Costa Coffee','Food Court'),
+(266,'Costa Coffee','Food Court'),
+(267,'Costa Coffee','Food Court');
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=0;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
