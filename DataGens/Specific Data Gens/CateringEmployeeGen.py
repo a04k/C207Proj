@@ -81,7 +81,7 @@ def genPerson():
 
 personData = [genPerson() for _ in range(58)]
 
-employeeData = [{'SSN': person['SSN'], 'Salary':random.choice([48000,50000)} for person in personData]
+employeeData = [{'SSN': person['SSN'], 'Salary':random.choice(48000,50000)} for person in personData]
 
 person_insert_statement = "INSERT INTO Person (SSN, Fname, Lname, Address, Phone, Bdate, Gender, Email) VALUES\n "
 
