@@ -28,8 +28,7 @@ INSERT INTO Pro (Player_SSN, Management_Name, Salary, ContractStart, ContractEnd
 (27, 'Sport', 225535, '2022-11-05', '2024-07-25'),
 (28, 'Sport', 262794, '2022-08-05', '2026-05-27'),
 (29, 'Sport', 311242, '2023-08-04', '2024-08-02'),
-(30, 'Sport', 399745, '2021-01-02', '2024-11-11');
-INSERT INTO Pro (Player_SSN, Management_Name, Salary, ContractStart, ContractEnd) VALUES
+(30, 'Sport', 399745, '2021-01-02', '2024-11-11'),
  (31, 'Sport', 105811, '2020-02-02', '2025-03-02'),
 (32, 'Sport', 97601, '2021-10-04', '2026-02-13'),
 (33, 'Sport', 81436, '2020-06-03', '2024-12-15'),
@@ -59,8 +58,7 @@ INSERT INTO Pro (Player_SSN, Management_Name, Salary, ContractStart, ContractEnd
 (57, 'Sport', 110463, '2020-07-01', '2026-10-13'),
 (58, 'Sport', 99769, '2023-05-03', '2026-09-20'),
 (59, 'Sport', 104945, '2023-11-04', '2026-06-20'),
-(60, 'Sport', 117627, '2022-01-04', '2025-08-15');
-INSERT INTO Pro (Player_SSN, Management_Name, Salary, ContractStart, ContractEnd) VALUES
+(60, 'Sport', 117627, '2022-01-04', '2025-08-15'),
 (61, 'Sport', 155605, '2020-03-06', '2026-01-07'),
 (62, 'Sport', 162287, '2021-04-05', '2026-03-23'),
 (63, 'Sport', 166569, '2021-09-06', '2024-04-08'),
@@ -72,8 +70,7 @@ INSERT INTO Pro (Player_SSN, Management_Name, Salary, ContractStart, ContractEnd
 (69, 'Sport', 137371, '2022-01-06', '2026-10-01'),
 (70, 'Sport', 149819, '2022-09-04', '2026-03-16'),
 (71, 'Sport', 142645, '2023-02-01', '2024-09-13'),
-(72, 'Sport', 197347, '2021-05-05', '2025-12-01');
-INSERT INTO Pro (Player_SSN, Management_Name, Salary, ContractStart, ContractEnd) VALUES
+(72, 'Sport', 197347, '2021-05-05', '2025-12-01'),
 (73, 'Sport', 144013, '2023-07-02', '2024-04-28'),
 (74, 'Sport', 117309, '2022-12-02', '2024-03-25'),
 (75, 'Sport', 135298, '2022-12-06', '2024-07-03'),
@@ -85,8 +82,7 @@ INSERT INTO Pro (Player_SSN, Management_Name, Salary, ContractStart, ContractEnd
 (81, 'Sport', 144058, '2023-08-05', '2025-05-02'),
 (82, 'Sport', 134779, '2023-12-01', '2024-10-03'),
 (83, 'Sport', 130349, '2022-10-06', '2026-12-17'),
-(84, 'Sport', 119109, '2022-07-05', '2025-06-22');
-INSERT INTO Pro (Player_SSN, Management_Name, Salary, ContractStart, ContractEnd) VALUES
+(84, 'Sport', 119109, '2022-07-05', '2025-06-22'),
 (85, 'Sport', 156526, '2023-09-06', '2024-11-20'),
 (86, 'Sport', 138367, '2023-10-01', '2026-03-23'),
 (87, 'Sport', 140162, '2022-02-06', '2025-11-07'),
@@ -96,8 +92,7 @@ INSERT INTO Pro (Player_SSN, Management_Name, Salary, ContractStart, ContractEnd
 (91, 'Sport', 159542, '2023-11-05', '2025-07-07'),
 (92, 'Sport', 149449, '2022-04-01', '2026-04-09'),
 (93, 'Sport', 122025, '2022-12-04', '2025-02-20'),
-(94, 'Sport', 158108, '2022-03-02', '2026-08-19');
-INSERT INTO Pro (Player_SSN, Management_Name, Salary, ContractStart, ContractEnd) VALUES
+(94, 'Sport', 158108, '2022-03-02', '2026-08-19'),
 (95,"Sport",101586,"2022-03-05","2024-07-03"),
 (96,"Sport",91671,"2022-07-04","2025-03-18"),
 (97,"Sport",91071,"2023-11-06","2025-01-11"),
