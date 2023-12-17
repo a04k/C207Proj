@@ -137,18 +137,6 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `Club_DB`.`Event`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `Club_DB`.`Event` ;
-
-CREATE TABLE IF NOT EXISTS `Club_DB`.`Event` (
-  `Name` VARCHAR(45) NOT NULL,
-  `Date` DATE NOT NULL,
-  PRIMARY KEY (`Name`))
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
 -- Table `Club_DB`.`Sponsor`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `Club_DB`.`Sponsor` ;
@@ -156,13 +144,7 @@ DROP TABLE IF EXISTS `Club_DB`.`Sponsor` ;
 CREATE TABLE IF NOT EXISTS `Club_DB`.`Sponsor` (
   `Name` VARCHAR(15) NOT NULL,
   `Website` VARCHAR(20) NULL,
-  `Event_Name` VARCHAR(45) NOT NULL,
-  PRIMARY KEY (`Name`),
-  CONSTRAINT `fk_Sponsor_Event1`
-    FOREIGN KEY (`Event_Name`)
-    REFERENCES `Club_DB`.`Event` (`Name`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+  PRIMARY KEY (`Name`))
 ENGINE = InnoDB;
 
 
@@ -180,6 +162,24 @@ CREATE TABLE IF NOT EXISTS `Club_DB`.`Catering` (
   CONSTRAINT `fk_Catering_Management1`
     FOREIGN KEY (`Management_Name`)
     REFERENCES `Club_DB`.`Management` (`Name`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `Club_DB`.`Event`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `Club_DB`.`Event` ;
+
+CREATE TABLE IF NOT EXISTS `Club_DB`.`Event` (
+  `Name` VARCHAR(45) NOT NULL,
+  `Date` DATE NOT NULL,
+  `Sponsor_Name` VARCHAR(15) NOT NULL,
+  PRIMARY KEY (`Name`),
+  CONSTRAINT `fk_Event_Sponsor1`
+    FOREIGN KEY (`Sponsor_Name`)
+    REFERENCES `Club_DB`.`Sponsor` (`Name`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -1319,30 +1319,14 @@ COMMIT;
 
 
 -- -----------------------------------------------------
--- Data for table `Club_DB`.`Event`
--- -----------------------------------------------------
-START TRANSACTION;
-USE `Club_DB`;
-INSERT INTO `Club_DB`.`Event` (`Name`, `Date`) VALUES ('Swimming Championship', '2023-12-23');
-INSERT INTO `Club_DB`.`Event` (`Name`, `Date`) VALUES ('FIFA Tournament', '2024-01-12');
-INSERT INTO `Club_DB`.`Event` (`Name`, `Date`) VALUES ('New Years Concert', '2023-12-31');
-INSERT INTO `Club_DB`.`Event` (`Name`, `Date`) VALUES ('Watch Party', '2024-03-01');
-INSERT INTO `Club_DB`.`Event` (`Name`, `Date`) VALUES ('Ramadan 5on5 Football', '2024-03-20');
-INSERT INTO `Club_DB`.`Event` (`Name`, `Date`) VALUES ('Ramadan 5on5 Football Final', '2024-04-01');
-
-COMMIT;
-
-
--- -----------------------------------------------------
 -- Data for table `Club_DB`.`Sponsor`
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `Club_DB`;
-INSERT INTO `Club_DB`.`Sponsor` (`Name`, `Website`, `Event_Name`) VALUES ('Nike', 'Nike.com', 'Swimming Championship');
-INSERT INTO `Club_DB`.`Sponsor` (`Name`, `Website`, `Event_Name`) VALUES ('WE', 'te.eg', 'Fifa tournament');
-INSERT INTO `Club_DB`.`Sponsor` (`Name`, `Website`, `Event_Name`) VALUES ('BanqueMisr', 'banquemisr.com', 'New Years Concert');
-INSERT INTO `Club_DB`.`Sponsor` (`Name`, `Website`, `Event_Name`) VALUES ('Watch It', 'watchit.com', 'Watch Party');
-INSERT INTO `Club_DB`.`Sponsor` (`Name`, `Website`, `Event_Name`) VALUES ('Nike ', 'Nike.com', 'Ramadan 5on5 Football');
+INSERT INTO `Club_DB`.`Sponsor` (`Name`, `Website`) VALUES ('Nike', 'Nike.com');
+INSERT INTO `Club_DB`.`Sponsor` (`Name`, `Website`) VALUES ('WE', 'te.eg');
+INSERT INTO `Club_DB`.`Sponsor` (`Name`, `Website`) VALUES ('BanqueMisr', 'banquemisr.com');
+INSERT INTO `Club_DB`.`Sponsor` (`Name`, `Website`) VALUES ('Watch It', 'watchit.com');
 
 COMMIT;
 
@@ -1359,6 +1343,21 @@ INSERT INTO `Club_DB`.`Catering` (`Name`, `Management_Name`, `NumOfBranches`, `T
 INSERT INTO `Club_DB`.`Catering` (`Name`, `Management_Name`, `NumOfBranches`, `Type`) VALUES ('Blaban', 'Catering', 1, 'Restaurant');
 INSERT INTO `Club_DB`.`Catering` (`Name`, `Management_Name`, `NumOfBranches`, `Type`) VALUES ('Vamos', 'Catering', 3, 'Cafe');
 INSERT INTO `Club_DB`.`Catering` (`Name`, `Management_Name`, `NumOfBranches`, `Type`) VALUES ('Costa Coffee', 'Catering', 1, 'Cafe');
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `Club_DB`.`Event`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `Club_DB`;
+INSERT INTO `Club_DB`.`Event` (`Name`, `Date`, `Sponsor_Name`) VALUES ('Swimming Championship', '2023-12-23', 'Nike');
+INSERT INTO `Club_DB`.`Event` (`Name`, `Date`, `Sponsor_Name`) VALUES ('FIFA Tournament', '2024-01-12', 'WE');
+INSERT INTO `Club_DB`.`Event` (`Name`, `Date`, `Sponsor_Name`) VALUES ('New Years Concert', '2023-12-31', 'Banque Misr');
+INSERT INTO `Club_DB`.`Event` (`Name`, `Date`, `Sponsor_Name`) VALUES ('Watch Party', '2024-03-01', 'Watch It');
+INSERT INTO `Club_DB`.`Event` (`Name`, `Date`, `Sponsor_Name`) VALUES ('Ramadan 5on5 Football', '2024-03-20', '');
+INSERT INTO `Club_DB`.`Event` (`Name`, `Date`, `Sponsor_Name`) VALUES ('Ramadan 5on5 Football Final', '2024-04-01', 'Nike');
 
 COMMIT;
 

@@ -97,7 +97,7 @@ def genData():
  ---
  We had plenty of query ideas, seeing that we have a whole lot of tables and data to work with but we settled on the following 20:
 
-``` 
+``` SQL
 -- 
 select p.fname ,p.lname,t.SportName, t.teamname ,r.ContractStart
 from person p , teamsport_player t , pro_player r 
@@ -138,11 +138,11 @@ from person p , coach c , individualsport_player i
 where c.Coach_SSN =p.ssn and c.Coach_SSN=i.Coach_SSN ;
 
 SELECT p.fname ,p.lname ,e.salary , c.Catering_Name
- from person p, cateringstaff c , employee e
- where c.Worker_SSN=p.ssn and p.ssn=e.Employee_SSN and
- e.salary>
- (select avg(e.salary) from employee e ,cateringstaff c where c.Worker_SSN=e.Employee_SSN)
- order by e.salary desc;
+from person p, cateringstaff c , employee e
+where c.Worker_SSN=p.ssn and p.ssn=e.Employee_SSN and
+e.salary>
+(select avg(e.salary) from employee e ,cateringstaff c where c.Worker_SSN=e.Employee_SSN)
+order by e.salary desc;
 
 select Management_Name,count(Employee_SSN) as 'no of employees'
 from management_employee
@@ -150,10 +150,10 @@ group by management_name
 order by management_name asc;
 
 select c.Catering_Name , k.type , sum(e.salary) as paid_salaries
- from cateringstaff c,catering k,employee e
- where c.Worker_SSN=e.Employee_SSN and c.Catering_Name=k.name 
- group by c.Catering_Name 
- order by paid_salaries desc;
+from cateringstaff c,catering k,employee e
+where c.Worker_SSN=e.Employee_SSN and c.Catering_Name=k.name 
+group by c.Catering_Name 
+order by paid_salaries desc;
 
 select sportname,count(Player_SSN) as no_of_pro_players from pro_player
 group by sportname
