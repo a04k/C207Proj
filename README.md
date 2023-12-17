@@ -28,7 +28,8 @@
 ### Generating the Data for Inserts
 ---
    Writing and creating data for people manually would have taken a very long time especially when dealing with a whole lot of it so, to save time we built a program that could give insert statements to fill up the tables.
-
+<details>
+<summary> Click to Expand </summary>
   ```python
 import random
 import datetime
@@ -122,6 +123,7 @@ with open('genData.txt', 'w') as file:
 
 print("-> done")
 ```
+</details>
 
   This data generator code can then be edited so we generate data for specific groups, so we could fill up the tables with the data required, and just add all of it into the Person superclass.
   P.S : theres a C++ version of this code too, just not updated though.
@@ -133,13 +135,13 @@ print("-> done")
 
 ``` 
 select p.fname ,p.lname,t.SportName, t.teamname ,r.ContractStart
-from person p , teamsport_player t , pro r 
+from person p , teamsport_player t , pro_player r 
 where t.Player_SSN=p.SSN and r.Player_SSN=p.SSN
 and r.ContractStart in
 (select min(r.ContractStart) 
-from teamsport_player t , pro r ,person b
+from teamsport_player t , pro_player r ,person b
 where t.Player_SSN=r.Player_SSN and r.Player_SSN=b.SSN
-group by t.TeamName)
+group by t.TeamName);
 
 select e.Event_Name,e.PlaceName , p.location ,s.name
 from event_managment_place e , place p , hall h ,sponsor s
@@ -165,10 +167,10 @@ from menu m inner  join catering_location cl
 on m.Catering_Name = cl.CateringName 
 where m.item like"%coffee%";
 
-select distinct p.fname,p.lname , c.sportname , r.salary ,
-r.salary+0.1*r.salary as 'increased salary' 
-from person p , coach c , pro r,individualsport_player i
-where c.Coach_SSN =p.ssn and c.Coach_SSN=i.Coach_SSN and c.Coach_SSN=r.coach_ssn ;
+select distinct p.fname,p.lname , c.sportname , c.salary ,
+c.salary+0.1*c.salary as 'increased salary' 
+from person p , coach c , individualsport_player i
+where c.Coach_SSN =p.ssn and c.Coach_SSN=i.Coach_SSN ;
 
 SELECT p.fname ,p.lname ,e.salary , c.Catering_Name
  from person p, cateringstaff c , employee e
@@ -188,14 +190,13 @@ select c.Catering_Name , k.type , sum(e.salary) as paid_salaries
  group by c.Catering_Name 
  order by paid_salaries desc;
 
-select sportname,count(Player_SSN) as no_of_players from pro_player
+select sportname,count(Player_SSN) as no_of_pro_players from pro_player
 group by sportname
 having count(Player_SSN)>=10
 order by no_of_players asc;
 
 select p.fname , p.lname , n.contractstart , n.contractend ,n.salary
-from person p
-join pro n on n.player_ssn = p.ssn
+from person p join pro_player n on n.player_ssn = p.ssn
 where n.contractend like '%2025%' and n.salary > 400000;
 
 select p.fname ,p.lname , m.name from person p , management m
