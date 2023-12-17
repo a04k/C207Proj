@@ -1,6 +1,14 @@
 MEMBERS{
 
 Sport-
+Players: (NON PRO)
+267-347
+20 Football
+20 Basketball
+20 SWIMMING
+20 KUNG FU
+
+
 PRO_Players:  INSERT INTO person and member and pro
 
 -AND teamsport_player
@@ -63,5 +71,7 @@ Swimming Championship (NIKE) 23-12-2023
 Fifa tournoment (WE) 28-01-2024
 New Years Concert (BanqueMisr) 31-12-2023
 Watch Party (Watchit) 02-01-2024
+5on5 tournament
+5on5 Finals
 }
 
