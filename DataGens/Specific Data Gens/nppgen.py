@@ -103,7 +103,7 @@ for member in memberData:
   values = f'({member["SSN"]}, "{member["Membership.SD"]}"),\n'
   member_insert_statement += values
 
-ts_insert_statement = "INSERT INTO TeamSport_Player (Player_SSN, SportName, TeamName) VALUES\n "
+ts_insert_statement = Player_SSN, SportName, TeamName"
 
 for ts in tsData:
   values = f'({ts["SSN"]},"Basketball", "Womens Team"),\n'

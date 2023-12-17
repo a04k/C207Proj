@@ -49,8 +49,7 @@ def genData():
     L_name = [ "Mohamed","Khaled","Ashraf","Waleed","Emad","Sayed","Yaser","Magdy","Adel","Nader","Sobhi","Hani","Hassan","Farag","Salah","Ghanim","Khalil","Zakaria","Fawzi","Ezzat" ]
     last_name = random.choice(L_name)
 
-    return first_name, last_name , gender , f"{random_number} {street}, {area}, {city}"
-
+    return first_name, last_name , gender , f"{random_number} {street} {area} {city}"
 
 def ssnGen():
     while True:
@@ -63,6 +62,7 @@ def ssnGen():
 used_ssn = set()
 current_ssn = 267
 
+
 def genPerson():
     Fname, Lname, gender, address = genData()
     name = Fname + Lname
@@ -74,32 +74,20 @@ def genPerson():
         'address': address,
         'email': name + str(random.randint(0, 420)) + '@' + random.choice(['gmail.com', 'hotmail.com', 'outlook.com']),
         'phone_number': random.choice(['010', '011', '012', '015']) + ''.join([str(digit) for digit in random.sample(range(10), 8)]),
-        'birthdate': datetime.date(random.randint(1960, 2019), random.randint(1, 12), random.randint(1, 28)),
+        'birthdate': datetime.date(random.randint(2003, 2008), random.randint(1, 12), random.randint(1, 28)),
         'gender': gender
     }
     return person
 
 personData = [genPerson() for _ in range(80)]
-
-memberData = [{'SSN': person['SSN'], 'Membership.SD':datetime.date(random.randint(2018, 2023), random.randint(1, 12), random.randint(1, 28))} for person in personData]
-
-person_insert_statement = "INSERT INTO Person (SSN, Fname, Lname, Address, Phone, Bdate, Gender, Email) VALUES\n "
+sql_insert_statement = "SSN, Fname, Lname, Address, Phone, Bdate, Gender, Email"
 
 for person in personData:
-    values = f'({person['SSN']}, "{person['Fname']}", "{person['Lname']}", "{person['address']}", "{person['phone_number']}", "{person['birthdate']}", "{person['gender']}", "{person['email']}"),\n'
-    person_insert_statement += values
-
-member_insert_statement = "INSERT INTO member (Member_SSN, MembershipStartDate) VALUES\n "
-
-for member in memberData:
-  values = f'({member["SSN"]}, "{member["Membership.SD"]}"),\n'
-  member_insert_statement += values
-
-totalinsert = person_insert_statement + member_insert_statement
+    values = f"{person['SSN']},{person['Fname']},{person['Lname']},{person['address']},{person['phone_number']},{person['birthdate']},{person['gender']},{person['email']}\n"
+    sql_insert_statement += values
 
 
-with open('nppMemData.txt', 'w') as file:
-    file.write(totalinsert)
-
+with open('npPlayersPerson.txt', 'w') as file:
+    file.write(sql_insert_statement)
 
 print("-> done")

@@ -51,23 +51,6 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `Club_DB`.`Pro_Player`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `Club_DB`.`Pro_Player` ;
-
-CREATE TABLE IF NOT EXISTS `Club_DB`.`Pro_Player` (
-  `Player_SSN` INT NOT NULL,
-  `SportName` VARCHAR(15) NOT NULL,
-  PRIMARY KEY (`Player_SSN`),
-  CONSTRAINT `fk_Pro_Player_Member1`
-    FOREIGN KEY (`Player_SSN`)
-    REFERENCES `Club_DB`.`Member` (`Member_SSN`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
 -- Table `Club_DB`.`Employee`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `Club_DB`.`Employee` ;
@@ -85,6 +68,49 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
+-- Table `Club_DB`.`Management`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `Club_DB`.`Management` ;
+
+CREATE TABLE IF NOT EXISTS `Club_DB`.`Management` (
+  `Name` VARCHAR(10) NOT NULL,
+  `Manager_SSN` INT NOT NULL,
+  PRIMARY KEY (`Name`),
+  CONSTRAINT `fk_Management_Employee1`
+    FOREIGN KEY (`Manager_SSN`)
+    REFERENCES `Club_DB`.`Employee` (`Employee_SSN`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `Club_DB`.`Pro_Player`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `Club_DB`.`Pro_Player` ;
+
+CREATE TABLE IF NOT EXISTS `Club_DB`.`Pro_Player` (
+  `Player_SSN` INT NOT NULL,
+  `Management_Name` VARCHAR(10) NOT NULL,
+  `SportName` VARCHAR(15) NOT NULL,
+  `Salary` FLOAT NOT NULL,
+  `ContractStart` DATE NOT NULL,
+  `ContractEnd` DATE NOT NULL,
+  PRIMARY KEY (`Player_SSN`),
+  CONSTRAINT `fk_Pro_Player_Member1`
+    FOREIGN KEY (`Player_SSN`)
+    REFERENCES `Club_DB`.`Member` (`Member_SSN`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Pro_Player_Management1`
+    FOREIGN KEY (`Management_Name`)
+    REFERENCES `Club_DB`.`Management` (`Name`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
 -- Table `Club_DB`.`Coach`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `Club_DB`.`Coach` ;
@@ -92,10 +118,19 @@ DROP TABLE IF EXISTS `Club_DB`.`Coach` ;
 CREATE TABLE IF NOT EXISTS `Club_DB`.`Coach` (
   `Coach_SSN` INT NOT NULL,
   `SportName` VARCHAR(15) NOT NULL,
+  `Management_Name` VARCHAR(10) NOT NULL,
+  `Salary` FLOAT NOT NULL,
+  `ContractStart` DATE NOT NULL,
+  `ContractEnd` DATE NOT NULL,
   PRIMARY KEY (`Coach_SSN`),
   CONSTRAINT `fk_Coach_person1`
     FOREIGN KEY (`Coach_SSN`)
     REFERENCES `Club_DB`.`Person` (`SSN`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Coach_Management1`
+    FOREIGN KEY (`Management_Name`)
+    REFERENCES `Club_DB`.`Management` (`Name`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -126,23 +161,6 @@ CREATE TABLE IF NOT EXISTS `Club_DB`.`Sponsor` (
   CONSTRAINT `fk_Sponsor_Event1`
     FOREIGN KEY (`Event_Name`)
     REFERENCES `Club_DB`.`Event` (`Name`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `Club_DB`.`Management`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `Club_DB`.`Management` ;
-
-CREATE TABLE IF NOT EXISTS `Club_DB`.`Management` (
-  `Name` VARCHAR(10) NOT NULL,
-  `Manager_SSN` INT NOT NULL,
-  PRIMARY KEY (`Name`),
-  CONSTRAINT `fk_Management_Employee1`
-    FOREIGN KEY (`Manager_SSN`)
-    REFERENCES `Club_DB`.`Employee` (`Employee_SSN`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -363,37 +381,6 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `Club_DB`.`Pro`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `Club_DB`.`Pro` ;
-
-CREATE TABLE IF NOT EXISTS `Club_DB`.`Pro` (
-  `Player_SSN` INT NULL DEFAULT NULL,
-  `Coach_SSN` INT NULL DEFAULT NULL,
-  `Management_Name` VARCHAR(10) NOT NULL,
-  `Salary` FLOAT NOT NULL,
-  `ContractStart` DATE NOT NULL,
-  `ContractEnd` DATE NOT NULL,
-  PRIMARY KEY (`Player_SSN`, `Coach_SSN`),
-  CONSTRAINT `fk_Pro_Pro_Player1`
-    FOREIGN KEY (`Player_SSN`)
-    REFERENCES `Club_DB`.`Pro_Player` (`Player_SSN`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_Pro_Coach1`
-    FOREIGN KEY (`Coach_SSN`)
-    REFERENCES `Club_DB`.`Coach` (`Coach_SSN`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_Pro_Management1`
-    FOREIGN KEY (`Management_Name`)
-    REFERENCES `Club_DB`.`Management` (`Name`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
 -- Table `Club_DB`.`Team`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `Club_DB`.`Team` ;
@@ -406,6 +393,31 @@ CREATE TABLE IF NOT EXISTS `Club_DB`.`Team` (
   CONSTRAINT `fk_Team_Coach1`
     FOREIGN KEY (`Coach_SSN`)
     REFERENCES `Club_DB`.`Coach` (`Coach_SSN`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `Club_DB`.`Player`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `Club_DB`.`Player` ;
+
+CREATE TABLE IF NOT EXISTS `Club_DB`.`Player` (
+  `PlayerSSN` INT NOT NULL,
+  `Management_Name` VARCHAR(10) NOT NULL,
+  `SportName` VARCHAR(15) NOT NULL,
+  `subPrice` FLOAT NOT NULL,
+  `StartDate` DATE NOT NULL,
+  PRIMARY KEY (`PlayerSSN`),
+  CONSTRAINT `fk_nonProPlayer_Management1`
+    FOREIGN KEY (`Management_Name`)
+    REFERENCES `Club_DB`.`Management` (`Name`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Player_Member1`
+    FOREIGN KEY (`PlayerSSN`)
+    REFERENCES `Club_DB`.`Member` (`Member_SSN`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -683,6 +695,86 @@ INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BD
 INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (265, 'Hager', 'Emad', '100 Hassan Ramadan Al Doqi Giza', '01292716043', '1999-04-01', 'F', 'HagerEmad313@gmail.com');
 INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (266, 'Eyad', 'Khalil', '64 Gamal Abdel Nasser Al-Salam Cairo', '01094561237', '1994-01-20', 'M', 'EyadKhalil381@gmail.com');
 INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (267, 'Amani', 'Emad', '82 Hassan Assem Zamalek Cairo', '01043097162', '1997-03-28', 'F', 'AmaniEmad152@outlook.com');
+INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (268, 'Rahma', 'Adel', '97 Hassan Ramadan Al Doqi Giza', '01280742519', '2004-06-07', 'F', 'RahmaAdel238@hotmail.com');
+INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (269, 'Mostafa', 'Ezzat', '62 Adly Downtown Cairo', '01513864759', '2007-02-08', 'M', 'MostafaEzzat112@outlook.com');
+INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (270, 'Marawan', 'Hassan', '52 Gamal Abdel Nasser Al-Salam Cairo', '01162340985', '2003-12-01', 'M', 'MarawanHassan182@outlook.com');
+INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (271, 'Yasmin', 'Ezzat', '28 Al Khamrawaya Shobra Cairo', '01262098457', '2007-08-28', 'F', 'YasminEzzat237@gmail.com');
+INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (272, 'Nada', 'Ashraf', '100 Gamal Abdel Nasser Al-Salam Cairo', '01551286930', '2006-12-10', 'F', 'NadaAshraf234@gmail.com');
+INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (273, 'Seif', 'Emad', '34 15 May Shobra Cairo', '01227196053', '2008-03-17', 'M', 'SeifEmad359@hotmail.com');
+INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (274, 'Marawan', 'Khaled', '42 Al Merghany Heliopolis Cairo', '01290152643', '2003-08-23', 'M', 'MarawanKhaled116@gmail.com');
+INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (275, 'Marawan', 'Nader', '62 Hassan Ramadan Al Doqi Giza', '01115603792', '2005-10-20', 'M', 'MarawanNader269@outlook.com');
+INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (276, 'Noureen', 'Magdy', '26 Shagaret Al Dor Zamalek Cairo', '01008216435', '2004-09-12', 'F', 'NoureenMagdy255@hotmail.com');
+INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (277, 'Yara', 'Adel', '85 Adly Downtown Cairo', '01001962835', '2003-04-26', 'F', 'YaraAdel344@outlook.com');
+INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (278, 'Ahmed', 'Hani', '37 Hassan Sabry Zamalek Cairo', '01263521478', '2003-10-13', 'M', 'AhmedHani268@gmail.com');
+INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (279, 'Kareem', 'Farag', '50 Hassan Assem Zamalek Cairo', '01279614580', '2004-01-24', 'M', 'KareemFarag149@outlook.com');
+INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (280, 'Amani', 'Salah', '42 Salah El Din Heliopolis Cairo', '01103176842', '2008-11-25', 'F', 'AmaniSalah415@gmail.com');
+INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (281, 'Mahmoud', 'Khaled', '46 Al Nozha Heliopolis Cairo', '01565143208', '2006-08-20', 'M', 'MahmoudKhaled64@hotmail.com');
+INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (282, 'Ali', 'Nader', '43 Hassan Assem Zamalek Cairo', '01514280759', '2003-10-20', 'M', 'AliNader250@outlook.com');
+INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (283, 'Amr', 'Waleed', '80 Hassan Ramadan Al Doqi Giza', '01206289743', '2005-11-20', 'M', 'AmrWaleed350@gmail.com');
+INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (284, 'Wael', 'Mohamed', '84 Gamal Abdel Nasser Al-Salam Cairo', '01054671328', '2007-07-06', 'M', 'WaelMohamed409@hotmail.com');
+INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (285, 'Arwa', 'Farag', '28 Gamal Abdel Nasser Al-Salam Cairo', '01129408517', '2003-06-23', 'F', 'ArwaFarag29@outlook.com');
+INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (286, 'Abdalaziz', 'Nader', '55 Salah El Din Heliopolis Cairo', '01197152843', '2007-10-13', 'M', 'AbdalazizNader137@gmail.com');
+INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (287, 'Adham', 'Waleed', '84 kamal Al Tawil Zamalek Cairo', '01540216537', '2004-11-27', 'M', 'AdhamWaleed70@outlook.com');
+INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (288, 'Nour', 'Fawzi', '51 Sherif Downtown Cairo', '01018607349', '2008-04-14', 'F', 'NourFawzi78@outlook.com');
+INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (289, 'Omar', 'Nader', '85 Ahmed Helmy Shobra Cairo', '01590562417', '2004-09-06', 'M', 'OmarNader19@gmail.com');
+INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (290, 'Arwa', 'Farag', '96 Al Merghany Heliopolis Cairo', '01018396420', '2007-05-26', 'F', 'ArwaFarag355@hotmail.com');
+INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (291, 'Omnya', 'Hassan', '14 Talaat Harb Downtown Cairo', '01149367582', '2007-06-15', 'F', 'OmnyaHassan239@gmail.com');
+INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (292, 'Shahd', 'Ashraf', '65 Al Hegaz Heliopolis Cairo', '01272835409', '2005-05-14', 'F', 'ShahdAshraf162@hotmail.com');
+INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (293, 'Ibrahim', 'Hassan', '54 Shaheen Al Doqi Giza', '01167041932', '2006-01-06', 'M', 'IbrahimHassan91@hotmail.com');
+INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (294, 'Amir', 'Yaser', '55 Al Hegaz Heliopolis Cairo', '01557421936', '2006-04-03', 'M', 'AmirYaser133@gmail.com');
+INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (295, 'Seif', 'Nader', '51 Hassan Ramadan Al Doqi Giza', '01276481205', '2005-11-02', 'M', 'SeifNader349@outlook.com');
+INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (296, 'Abdelrahman', 'Mohamed', '29 Gad Eid Al Doqi Giza', '01503619287', '2004-09-21', 'M', 'AbdelrahmanMohamed107@gmail.com');
+INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (297, 'Hager', 'Sobhi', '73 Champeleon Downtown Cairo', '01064023917', '2006-11-23', 'F', 'HagerSobhi231@hotmail.com');
+INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (298, 'Sherif', 'Hassan', '63 Adly Downtown Cairo', '01232450891', '2005-08-16', 'M', 'SherifHassan408@gmail.com');
+INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (299, 'Nada', 'Fawzi', '98 Hassan Ramadan Al Doqi Giza', '01210328657', '2004-06-23', 'F', 'NadaFawzi307@hotmail.com');
+INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (300, 'Amani', 'Adel', '76 Doletyan Shobra Cairo', '01207618294', '2008-09-23', 'F', 'AmaniAdel400@hotmail.com');
+INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (301, 'Salma', 'Waleed', '92 Al Ahram Heliopolis Cairo', '01276358941', '2004-08-14', 'F', 'SalmaWaleed48@hotmail.com');
+INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (302, 'Wael', 'Fawzi', '73 18St. ElTahrir City Imbaba Giza', '01045907681', '2004-04-13', 'M', 'WaelFawzi66@outlook.com ');
+INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (303, 'Yasmin', 'Mohamed', '13 Damascus Maadi Cairo', '01178314502', '2004-06-27', 'F', 'YasminMohamed367@gmail.com');
+INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (304, 'Yara', 'Zakaria', '31 Adly Downtown Cairo', '01273195860', '2004-04-26', 'F', 'YaraZakaria191@hotmail.com');
+INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (305, 'Yousif', 'Fawzi', '56 Talaat Harb Imbaba Giza', '01235928064', '2008-11-05', 'M', 'YousifFawzi296@gmail.com');
+INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (306, 'Sherif', 'Salah', '29 Al Ahram Heliopolis Cairo', '01085132064', '2007-07-13', 'M', 'SherifSalah379@gmail.com');
+INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (307, 'Abdalaziz', 'Sobhi', '23 Hassan Sabry Zamalek Cairo', '01214632597', '2003-05-16', 'M', 'AbdalazizSobhi203@hotmail.com');
+INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (308, 'Shahd', 'Adel', '100 Ahmed Helmy Shobra Cairo', '01293086572', '2008-03-26', 'F', 'ShahdAdel99@gmail.com');
+INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (309, 'Abdallah', 'Waleed', '77 Shaheen Al Doqi Giza', '01537859104', '2003-09-25', 'M', 'AbdallahWaleed69@hotmail.com');
+INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (310, 'Amani', 'Fawzi', '99 El Sadat Al-Salam Cairo', '01174308921', '2007-11-16', 'F', 'AmaniFawzi368@hotmail.com');
+INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (311, 'Amir', 'Sayed', '72 Salah El Din Heliopolis Cairo', '01237569082', '2003-09-22', 'M', 'AmirSayed239@gmail.com');
+INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (312, 'Ehab', 'Hani', '78 18St. ElTahrir City Imbaba Giza', '01251832079', '2007-07-13', 'M', 'EhabHani203@outlook.com');
+INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (313, 'Noureen', 'Adel', '66 18St. ElTahrir City Imbaba Giza', '01045320187', '2003-03-19', 'F', 'NoureenAdel133@gmail.com');
+INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (314, 'Nour', 'Waleed', '21 Mamdouh Salem Imbaba Giza', '01552943701', '2005-02-09', 'F', 'NourWaleed62@hotmail.com');
+INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (315, 'Nourhan', 'Adel', '85 15 May Shobra Cairo', '01513789546', '2003-12-08', 'F', 'NourhanAdel333@gmail.com');
+INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (316, 'Marawan', 'Hani', '72 El Sadat Al-Salam Cairo', '01230852649', '2005-01-21', 'M', 'MarawanHani49@outlook.com');
+INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (317, 'Nada', 'Farag', '48 Ahmed Helmy Shobra Cairo', '01043725081', '2008-06-21', 'F', 'NadaFarag390@gmail.com');
+INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (318, 'Rahma', 'Ezzat', '54 Baghdad Heliopolis Cairo', '01523975681', '2005-06-22', 'F', 'RahmaEzzat312@outlook.com');
+INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (319, 'Kareem', 'Salah', '23 Talaat Harb Downtown Cairo', '01578953421', '2006-01-08', 'M', 'KareemSalah61@hotmail.com');
+INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (320, 'Omar', 'Ashraf', '99 Gamal Abdel Nasser Al-Salam Cairo', '01276901523', '2004-05-25', 'M', 'OmarAshraf420@hotmail.com');
+INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (321, 'Nada', 'Emad', '5 28St. ElTahrir City Imbaba Giza', '01083460215', '2004-08-21', 'F', 'NadaEmad320@hotmail.com');
+INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (322, 'Kareem', 'Salah', '91 Mamdouh Salem Imbaba Giza', '01106541983', '2007-11-12', 'M', 'KareemSalah6@outlook.com');
+INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (323, 'Dina', 'Yaser', '98 Gamal Abdel Nasser Al-Salam Cairo', '01225416709', '2007-03-01', 'F', 'DinaYaser57@hotmail.com');
+INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (324, 'Seif', 'Sayed', '50 Al Merghany Heliopolis Cairo', '01119463570', '2005-10-09', 'M', 'SeifSayed313@hotmail.com');
+INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (325, 'Mohamed', 'Ezzat', '42 Damascus Maadi Cairo', '01004583169', '2003-05-08', 'M', 'MohamedEzzat11@hotmail.com');
+INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (326, 'Arwa', 'Khalil', '39 Rod El Farag Shobra Cairo', '01183165472', '2003-01-15', 'F', 'ArwaKhalil368@outlook.com');
+INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (327, 'Marawan', 'Khalil', '51 El Tahrir Downtown Cairo', '01116084325', '2005-05-21', 'M', 'MarawanKhalil191@outlook.com');
+INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (328, 'Yara', 'Magdy', '51 18St. ElTahrir City Imbaba Giza', '01534561079', '2005-10-07', 'F', 'YaraMagdy374@hotmail.com');
+INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (329, 'Arwa', 'Ashraf', '50 Damascus Maadi Cairo', '01126549371', '2004-03-17', 'F', 'ArwaAshraf310@gmail.com');
+INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (330, 'Abdalaziz', 'Nader', '56 Oraby Maadi Cairo', '01057106423', '2004-01-06', 'M', 'AbdalazizNader97@hotmail.com');
+INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (331, 'Haytham', 'Sayed', '53 15 May Shobra Cairo', '01140235697', '2006-05-01', 'M', 'HaythamSayed290@gmail.com');
+INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (332, 'Sherif', 'Emad', '99 Mohammed Mazhar Zamalek Cairo', '01578240561', '2008-02-08', 'M', 'SherifEmad222@outlook.com');
+INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (333, 'Nourhan', 'Sobhi', '75 Rod El Farag Shobra Cairo', '01532875604', '2007-07-13', 'F', 'NourhanSobhi405@gmail.com');
+INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (334, 'Toaa', 'Salah', '29 El Sadat Al-Salam Cairo', '01597658210', '2003-02-15', 'F', 'ToaaSalah236@outlook.com');
+INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (335, 'Aya', 'Ghanim', '91 Sherif Downtown Cairo', '01164783105', '2006-12-22', 'F', 'AyaGhanim19@outlook.com');
+INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (336, 'Amani', 'Waleed', '58 El Tahrir Downtown Cairo', '01540816327', '2003-05-28', 'F', 'AmaniWaleed418@hotmail.com');
+INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (337, 'Nourhan', 'Yaser', '87 Shobra St. Shobra Cairo', '01250683497', '2006-04-07', 'F', 'NourhanYaser225@hotmail.com');
+INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (338, 'Dina', 'Zakaria', '21 Al Nahda Maadi Cairo', '01502438657', '2005-04-17', 'F', 'DinaZakaria289@outlook.com');
+INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (339, 'Mostafa', 'Mohamed', '26 Hassan Assem Zamalek Cairo', '01226853097', '2003-10-15', 'M', 'MostafaMohamed264@gmail.com');
+INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (340, 'Eyad', 'Magdy', '78 Ahmed Helmy Shobra Cairo', '01097164250', '2006-04-14', 'M', 'EyadMagdy64@outlook.com');
+INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (341, 'Mariam', 'Khalil', '24 Salah El Din Heliopolis Cairo', '01560519482', '2008-02-11', 'F', 'MariamKhalil330@outlook.com');
+INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (342, 'Dina', 'Nader', '26 Al Ahram Heliopolis Cairo', '01076385209', '2005-10-25', 'F', 'DinaNader206@hotmail.com');
+INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (343, 'Omnya', 'Hassan', '39 Champeleon Downtown Cairo', '01139518427', '2004-03-23', 'F', 'OmnyaHassan179@hotmail.com');
+INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (344, 'Yara', 'Nader', '61 28St. ElTahrir City Imbaba Giza', '01050271693', '2005-07-01', 'F', 'YaraNader198@hotmail.com ');
+INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (345, 'Noureen', 'Hassan', '76 Shobra St. Shobra Cairo', '01061853290', '2007-08-13', 'F', 'NoureenHassan273@outlook.com');
+INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (346, 'Nada', 'Khaled', '80 Shaheen Al Doqi Giza', '01285039746', '2004-05-19', 'F', 'NadaKhaled298@outlook.com');
+INSERT INTO `Club_DB`.`Person` (`SSN`, `FName`, `LName`, `Address`, `Phone`, `BDATE`, `Gender`, `Email`) VALUES (347, 'Abdelrahman', 'Adel', '47 Al Teraa Al Boulakeya Shobra Cairo', '01529345168', '2005-03-14', 'M', 'AbdelrahmanAdel29@gmail.com');
 
 COMMIT;
 
@@ -692,309 +784,276 @@ COMMIT;
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `Club_DB`;
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (1, ' 2022-02-05');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (2, ' 2022-02-07');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (3, ' 2020-01-23');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (4, ' 2022-04-21');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (5, ' 2022-11-28');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (6, ' 2022-03-05');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (7, ' 2021-06-25');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (8, ' 2022-05-12');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (9, ' 2021-06-21');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (10, ' 2022-11-11');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (11, ' 2021-03-08');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (12, ' 2021-04-17');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (13, ' 2021-05-06');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (14, ' 2020-05-05');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (15, ' 2021-05-01');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (16, ' 2021-12-14');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (17, ' 2020-11-25');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (18, ' 2022-09-23');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (19, ' 2021-04-28');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (20, ' 2020-05-12');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (21, ' 2021-05-02');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (22, ' 2021-05-08');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (23, ' 2022-05-25');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (24, ' 2022-01-27');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (25, ' 2022-09-22');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (26, ' 2022-06-27');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (27, ' 2022-08-17');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (28, ' 2022-04-17');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (29, ' 2021-10-08');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (30, ' 2021-09-25');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (31, ' 2021-06-01');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (32, ' 2021-02-08');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (33, ' 2022-04-16');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (34, ' 2022-04-28');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (35, ' 2020-09-03');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (36, ' 2020-06-04');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (37, ' 2022-10-17');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (38, ' 2022-05-25');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (39, ' 2020-03-13');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (40, ' 2022-03-04');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (41, ' 2021-08-11');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (42, ' 2021-04-26');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (43, ' 2020-06-01');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (44, ' 2022-04-24');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (45, ' 2022-08-21');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (46, ' 2022-12-19');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (47, ' 2020-01-18');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (48, ' 2022-12-10');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (49, ' 2020-11-24');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (50, ' 2021-03-24');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (51, ' 2021-08-02');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (52, ' 2022-09-10');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (53, ' 2020-09-18');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (54, ' 2021-01-14');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (55, ' 2021-06-12');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (56, ' 2022-02-10');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (57, ' 2022-02-01');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (58, ' 2021-02-11');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (59, ' 2021-05-27');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (60, ' 2020-05-24');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES ( 61, ' 2020-10-03');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (62, ' 2021-08-17');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (63, ' 2020-07-24');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (64, ' 2022-02-20');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (65, ' 2022-09-24');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (66, ' 2021-10-19');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (67, ' 2022-08-19');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (68, ' 2022-11-03');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (69, ' 2021-06-10');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (70, ' 2020-03-08');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (71, ' 2021-11-16');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (72, ' 2021-08-21');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (73, ' 2022-05-27');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (74, ' 2020-08-24');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (75, ' 2021-06-03');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (76, ' 2020-09-02');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (77, ' 2022-12-10');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (78, ' 2021-10-19');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (79, ' 2020-09-20');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (80, ' 2020-02-14');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (81, ' 2020-09-17');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (82, ' 2021-05-07');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (83, ' 2020-07-26');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (84, ' 2021-01-27');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (85, ' 2022-03-23');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (86, ' 2021-06-21');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (87, ' 2016-06-19');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (88, ' 2019-07-28');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (89, ' 2018-08-18');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (90, ' 2021-12-10');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (91, ' 2019-03-05');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (92, ' 2022-03-12');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (93, ' 2015-03-12');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (94, ' 2019-04-06');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (95, ' 2016-12-10');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (96, ' 2023-06-09');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (97, ' 2015-06-19');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (98, ' 2018-08-01');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (99, ' 2017-12-27');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (100, ' 2021-02-26');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (101, ' 2019-06-26');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (102, ' 2021-02-16');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (103, ' 2022-02-27');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (104, ' 2023-10-07');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (115, ' 2010-02-15');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (116, ' 2008-11-10');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (117, ' 2011-06-05');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (118, ' 2015-05-08');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (119, ' 2009-02-15');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (120, ' 2010-11-19');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (121, ' 2012-11-19');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (122, ' 2015-02-26');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (123, ' 2011-01-07');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (124, ' 2011-11-16');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (125, ' 2021-02-15');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (126, ' 2006-01-11');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (127, ' 2008-08-24');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (128, ' 2021-10-22');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (129, ' 2019-07-15');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (130, ' 2006-05-10');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (131, ' 2022-01-24');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (132, ' 2017-11-08');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (133, ' 2022-01-08');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (134, ' 2022-07-07');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (135, ' 2009-07-06');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (136, ' 2020-07-05');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (137, ' 2005-12-04');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (138, ' 2021-04-01');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (139, ' 2021-06-16');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (140, ' 2011-08-03');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (141, ' 2017-05-15');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (142, ' 2021-10-16');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (143, ' 2015-03-27');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (144, ' 2009-04-04');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (145, ' 2019-08-04');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (146, ' 2012-11-27');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (147, ' 2020-11-25');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (148, ' 2015-11-23');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (149, ' 2022-07-20');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (150, ' 2021-03-01');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (151, ' 2015-12-01');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (152, ' 2015-07-15');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (153, ' 2021-02-13');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (154, ' 2009-08-24');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (155, ' 2006-08-08');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (156, ' 2014-05-09');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (157, ' 2008-10-06');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (158, ' 2018-01-25');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (159, ' 2021-11-01');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (160, ' 2014-06-16');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (161, ' 2019-08-21');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (162, ' 2010-11-21');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (163, ' 2007-02-04');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (164, ' 2019-06-21');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (165, ' 2020-03-13');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (166, ' 2008-10-12');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (167, ' 2022-06-12');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (168, ' 2007-10-08');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (169, ' 2007-06-25');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (170, ' 2019-02-26');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (171, ' 2018-11-12');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (172, ' 2010-09-22');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (173, ' 2008-08-17');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (174, ' 2020-07-26');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (175, ' 2010-10-17');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (176, ' 2013-11-16');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (177, ' 2014-01-04');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (178, ' 2009-11-14');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (179, ' 2017-04-22');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (180, ' 2009-04-25');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (181, ' 2020-03-04');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (182, ' 2012-11-12');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (183, ' 2005-11-28');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (184, ' 2015-04-15');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (185, ' 2006-10-27');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (186, ' 2016-12-07');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (187, ' 2018-05-28');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (188, ' 2019-11-04');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (189, ' 2016-01-08');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (190, ' 2021-05-12');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (191, ' 2015-05-02');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (192, ' 2009-07-24');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (193, ' 2008-10-13');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (194, ' 2009-06-26');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (195, ' 2021-08-07');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (196, ' 2011-01-25');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (197, ' 2019-10-08');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (198, ' 2021-09-26');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (199, ' 2020-05-04');
-INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (200, ' 2020-08-23');
-
-COMMIT;
-
-
--- -----------------------------------------------------
--- Data for table `Club_DB`.`Pro_Player`
--- -----------------------------------------------------
-START TRANSACTION;
-USE `Club_DB`;
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (1, ' Football');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (2, ' Football');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (3, ' Football');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (4, ' Football');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (5, ' Football');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (6, ' Football');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (7, ' Football');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (8, ' Football');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (9, ' Football');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (10, ' Football');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (11, ' Football');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (12, ' Football');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (13, ' Football');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (14, ' Football');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (15, ' Football');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (16, ' Football');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (17, ' Football');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (18, ' Football');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (19, ' Football');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (20, ' Football');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (21, ' Football');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (22, ' Football');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (23, ' Football');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (24, ' Football');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (25, ' Football');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (26, ' Football');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (27, ' Football');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (28, ' Football');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (29, ' Football');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (30, ' Football');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (31, ' Football');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (32, ' Football');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (33, ' Football');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (34, ' Football');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (35, ' Football');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (36, ' Football');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (37, ' Football');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (38, ' Football');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (39, ' Football');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (40, ' Football');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (41, ' Football');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (42, ' Football');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (43, ' Football');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (44, ' Football');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (45, ' Football');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (46, ' Football');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (47, ' Football');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (48, ' Football');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (49, ' Football');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (50, ' Football');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (51, ' Football');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (52, ' Football');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (53, ' Football');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (54, ' Football');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (55, ' Football');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (56, ' Football');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (57, ' Football');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (58, ' Football');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (59, ' Football');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (60, ' Football');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (61, ' Basketball');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (62, ' Basketball');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (63, ' Basketball');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (64, ' Basketball');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (65, ' Basketball');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (66, ' Basketball');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (67, ' Basketball');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (68, ' Basketball');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (69, ' Basketball');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (70, ' Basketball');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (71, ' Basketball');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (72, ' Basketball');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (73, ' Basketball');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (74, ' Basketball');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (75, ' Basketball');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (76, ' Basketball');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (77, ' Basketball');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (78, ' Basketball');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (79, ' Basketball');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (80, ' Basketball');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (81, ' Basketball');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (82, ' Basketball');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (83, ' Basketball');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (84, ' Basketball');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (85, ' Swimming');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (86, ' Swimming');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (87, ' Swimming');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (88, ' Swimming');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (89, ' Swimming');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (90, ' Swimming');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (91, ' Swimming');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (92, ' Swimming');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (93, ' Swimming');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (94, ' Swimming');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (95, ' Kung Fu');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (96, ' Kung Fu');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (97, ' Kung Fu');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (98, ' Kung Fu');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (99, ' Kung Fu');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (100, ' Kung Fu');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (101, ' Kung Fu');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (102, ' Kung Fu');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (103, ' Kung Fu');
-INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `SportName`) VALUES (104, ' Kung Fu');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (1, '2022-02-05');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (2, '2022-02-07');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (3, '2020-01-23');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (4, '2022-04-21');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (5, '2022-11-28');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (6, '2022-03-05');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (7, '2021-06-25');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (8, '2022-05-12');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (9, '2021-06-21');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (10, '2022-11-11');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (11, '2021-03-08');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (12, '2021-04-17');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (13, '2021-05-06');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (14, '2020-05-05');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (15, '2021-05-01');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (16, '2021-12-14');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (17, '2020-11-25');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (18, '2022-09-23');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (19, '2021-04-28');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (20, '2020-05-12');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (21, '2021-05-02');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (22, '2021-05-08');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (23, '2022-05-25');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (24, '2022-01-27');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (25, '2022-09-22');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (26, '2022-06-27');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (27, '2022-08-17');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (28, '2022-04-17');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (29, '2021-10-08');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (30, '2021-09-25');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (31, '2021-06-01');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (32, '2021-02-08');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (33, '2022-04-16');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (34, '2022-04-28');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (35, '2020-09-03');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (36, '2020-06-04');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (37, '2022-10-17');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (38, '2022-05-25');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (39, '2020-03-13');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (40, '2022-03-04');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (41, '2021-08-11');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (42, '2021-04-26');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (43, '2020-06-01');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (44, '2022-04-24');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (45, '2022-08-21');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (46, '2022-12-19');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (47, '2020-01-18');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (48, '2022-12-10');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (49, '2020-11-24');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (50, '2021-03-24');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (51, '2021-08-02');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (52, '2022-09-10');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (53, '2020-09-18');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (54, '2021-01-14');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (55, '2021-06-12');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (56, '2022-02-10');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (57, '2022-02-01');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (58, '2021-02-11');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (59, '2021-05-27');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (60, '2020-05-24');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (61, '2020-10-03');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (62, '2021-08-17');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (63, '2020-07-24');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (64, '2022-02-20');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (65, '2022-09-24');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (66, '2021-10-19');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (67, '2022-08-19');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (68, '2022-11-03');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (69, '2021-06-10');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (70, '2020-03-08');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (71, '2021-11-16');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (72, '2021-08-21');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (73, '2022-05-27');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (74, '2020-08-24');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (75, '2021-06-03');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (76, '2020-09-02');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (77, '2022-12-10');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (78, '2021-10-19');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (79, '2020-09-20');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (80, '2020-02-14');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (81, '2020-09-17');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (82, '2021-05-07');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (83, '2020-07-26');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (84, '2021-01-27');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (85, '2022-03-23');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (86, '2021-06-21');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (87, '2016-06-19');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (88, '2019-07-28');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (89, '2018-08-18');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (90, '2021-12-10');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (91, '2019-03-05');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (92, '2022-03-12');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (93, '2015-03-12');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (94, '2019-04-06');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (95, '2016-12-10');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (96, '2023-06-09');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (97, '2015-06-19');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (98, '2018-08-01');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (99, '2017-12-27');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (100, '2021-02-26');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (101, '2019-06-26');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (102, '2021-02-16');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (103, '2022-02-27');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (104, '2023-10-07');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (115, '2010-02-15');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (116, '2008-11-10');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (117, '2011-06-05');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (118, '2015-05-08');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (119, '2009-02-15');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (120, '2010-11-19');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (121, '2012-11-19');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (122, '2015-02-26');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (123, '2011-01-07');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (124, '2011-11-16');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (125, '2021-02-15');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (126, '2006-01-11');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (127, '2008-08-24');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (128, '2021-10-22');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (129, '2019-07-15');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (130, '2006-05-10');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (131, '2022-01-24');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (132, '2017-11-08');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (133, '2022-01-08');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (134, '2022-07-07');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (135, '2009-07-06');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (136, '2020-07-05');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (137, '2005-12-04');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (138, '2021-04-01');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (139, '2021-06-16');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (140, '2011-08-03');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (141, '2017-05-15');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (142, '2021-10-16');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (143, '2015-03-27');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (144, '2009-04-04');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (145, '2019-08-04');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (146, '2012-11-27');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (147, '2020-11-25');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (148, '2015-11-23');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (149, '2022-07-20');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (150, '2021-03-01');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (151, '2015-12-01');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (152, '2015-07-15');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (153, '2021-02-13');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (154, '2009-08-24');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (155, '2006-08-08');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (156, '2014-05-09');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (157, '2008-10-06');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (158, '2018-01-25');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (159, '2021-11-01');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (160, '2014-06-16');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (161, '2019-08-21');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (162, '2010-11-21');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (163, '2007-02-04');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (164, '2019-06-21');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (165, '2020-03-13');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (166, '2008-10-12');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (167, '2022-06-12');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (168, '2007-10-08');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (169, '2007-06-25');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (170, '2019-02-26');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (171, '2018-11-12');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (172, '2010-09-22');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (173, '2008-08-17');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (174, '2020-07-26');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (175, '2010-10-17');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (176, '2013-11-16');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (177, '2014-01-04');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (178, '2009-11-14');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (179, '2017-04-22');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (180, '2009-04-25');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (181, '2020-03-04');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (182, '2012-11-12');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (183, '2005-11-28');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (184, '2015-04-15');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (185, '2006-10-27');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (186, '2016-12-07');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (187, '2018-05-28');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (188, '2019-11-04');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (189, '2016-01-08');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (190, '2021-05-12');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (191, '2015-05-02');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (192, '2009-07-24');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (193, '2008-10-13');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (194, '2009-06-26');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (195, '2021-08-07');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (196, '2011-01-25');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (197, '2019-10-08');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (198, '2021-09-26');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (199, '2020-05-04');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (200, '2020-08-23');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (268, '2019-06-26');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (269, '2023-03-01');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (270, '2019-09-11');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (271, '2018-02-03');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (272, '2019-12-12');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (273, '2020-07-26');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (274, '2018-11-23');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (275, '2023-07-28');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (276, '2020-03-08');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (277, '2020-02-07');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (278, '2019-03-24');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (279, '2019-08-26');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (280, '2020-04-15');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (281, '2018-04-19');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (282, '2020-09-22');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (283, '2018-12-03');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (284, '2022-06-19');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (285, '2020-01-25');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (286, '2018-06-17');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (287, '2019-03-23');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (288, '2020-11-28');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (289, '2023-11-10');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (290, '2022-01-18');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (291, '2022-06-22');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (292, '2021-06-23');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (293, '2018-06-02');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (294, '2021-12-18');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (295, '2018-05-24');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (296, '2023-09-23');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (297, '2020-07-03');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (298, '2021-11-24');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (299, '2018-01-21');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (300, '2018-03-21');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (301, '2018-06-01');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (302, '2023-08-18');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (303, '2023-07-21');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (304, '2020-01-24');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (305, '2019-01-08');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (306, '2023-11-05');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (307, '2022-06-23');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (308, '2023-10-12');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (309, '2018-11-17');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (310, '2023-09-22');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (311, '2019-12-09');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (312, '2018-05-03');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (313, '2021-05-16');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (314, '2023-04-15');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (315, '2021-05-14');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (316, '2023-05-09');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (317, '2022-06-16');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (318, '2021-11-28');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (319, '2022-11-11');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (320, '2020-04-19');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (321, '2018-08-14');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (322, '2022-08-18');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (323, '2020-07-24');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (324, '2020-01-06');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (325, '2018-08-15');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (326, '2019-01-03');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (327, '2020-02-22');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (328, '2019-12-19');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (329, '2021-05-01');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (330, '2018-01-16');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (331, '2018-05-12');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (332, '2018-02-21');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (333, '2018-07-01');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (334, '2022-04-17');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (335, '2019-11-06');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (336, '2021-10-14');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (337, '2023-04-07');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (338, '2018-04-07');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (339, '2019-12-19');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (340, '2019-08-05');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (341, '2023-12-18');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (342, '2021-12-27');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (343, '2019-02-28');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (344, '2022-01-21');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (345, '2023-11-12');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (346, '2019-12-25');
+INSERT INTO `Club_DB`.`Member` (`Member_SSN`, `MembershipStartDate`) VALUES (347, '2019-12-24');
 
 COMMIT;
 
@@ -1114,20 +1173,147 @@ COMMIT;
 
 
 -- -----------------------------------------------------
+-- Data for table `Club_DB`.`Management`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `Club_DB`;
+INSERT INTO `Club_DB`.`Management` (`Name`, `Manager_SSN`) VALUES ('Sport',  130);
+INSERT INTO `Club_DB`.`Management` (`Name`, `Manager_SSN`) VALUES ('Events',  135);
+INSERT INTO `Club_DB`.`Management` (`Name`, `Manager_SSN`) VALUES ('Quality',  140);
+INSERT INTO `Club_DB`.`Management` (`Name`, `Manager_SSN`) VALUES ('Services',  148);
+INSERT INTO `Club_DB`.`Management` (`Name`, `Manager_SSN`) VALUES ('Board',  149);
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `Club_DB`.`Pro_Player`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `Club_DB`;
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (1, 'Sport', 'Football', 409916, '2022-03-03', '2025-06-23');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (2, 'Sport', 'Football', 282056, '2021-08-05', '2025-10-02');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (3, 'Sport', 'Football', 422345, '2020-10-04', '2024-01-12');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (4, 'Sport', 'Football', 424615, '2023-12-05', '2026-10-27');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (5, 'Sport', 'Football', 426611, '2020-10-05', '2026-04-18');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (6, 'Sport', 'Football', 373424, '2022-07-06', '2024-06-14');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (7, 'Sport', 'Football', 213697, '2020-01-05', '2025-12-06');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (8, 'Sport', 'Football', 292068, '2023-06-03', '2026-03-12');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (9, 'Sport', 'Football', 415439, '2023-05-01', '2024-05-03');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (10, 'Sport', 'Football', 433134, '2022-08-03', '2025-09-17');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (11, 'Sport', 'Football', 201077, '2020-05-06', '2024-08-11');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (12, 'Sport', 'Football', 338020, '2022-09-05', '2026-12-14');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (13, 'Sport', 'Football', 339133, '2023-06-01', '2024-06-23');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (14, 'Sport', 'Football', 210788, '2022-08-01', '2025-07-24');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (15, 'Sport', 'Football', 276596, '2020-06-01', '2025-10-24');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (16, 'Sport', 'Football', 385569, '2022-11-05', '2025-08-04');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (17, 'Sport', 'Football', 337675, '2023-09-04', '2026-08-26');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (18, 'Sport', 'Football', 336118, '2022-07-06', '2024-05-13');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (19, 'Sport', 'Football', 363535, '2021-07-03', '2025-01-03');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (20, 'Sport', 'Football', 374058, '2022-07-04', '2025-04-08');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (21, 'Sport', 'Football', 219003, '2022-09-01', '2025-03-22');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (22, 'Sport', 'Football', 281909, '2022-10-02', '2025-07-01');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (23, 'Sport', 'Football', 329828, '2022-08-05', '2026-08-16');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (24, 'Sport', 'Football', 352318, '2020-05-03', '2024-12-23');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (25, 'Sport', 'Football', 276201, '2020-11-02', '2025-07-25');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (26, 'Sport', 'Football', 361562, '2021-08-03', '2025-10-23');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (27, 'Sport', 'Football', 225535, '2022-11-05', '2024-07-25');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (28, 'Sport', 'Football', 262794, '2022-08-05', '2026-05-27');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (29, 'Sport', 'Football', 311242, '2023-08-04', '2024-08-02');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (30, 'Sport', 'Football', 399745, '2021-01-02', '2024-11-11');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (31, 'Sport', 'Football', 105811, '2020-02-02', '2025-03-02');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (32, 'Sport', 'Football', 97601, '2021-10-04', '2026-02-13');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (33, 'Sport', 'Football', 81436, '2020-06-03', '2024-12-15');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (34, 'Sport', 'Football', 105298, '2023-02-03', '2026-08-18');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (35, 'Sport', 'Football', 102287, '2020-10-04', '2024-05-27');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (36, 'Sport', 'Football', 78836, '2020-01-06', '2024-05-02');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (37, 'Sport', 'Football', 98450, '2022-11-03', '2025-12-10');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (38, 'Sport', 'Football', 81671, '2023-12-04', '2024-12-18');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (39, 'Sport', 'Football', 118825, '2023-04-03', '2025-04-22');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (40, 'Sport', 'Football', 86308, '2021-12-01', '2025-12-22');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (41, 'Sport', 'Football', 116795, '2023-05-01', '2024-04-18');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (42, 'Sport', 'Football', 95344, '2022-01-06', '2025-11-16');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (43, 'Sport', 'Football', 91095, '2023-07-05', '2024-01-16');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (44, 'Sport', 'Football', 108190, '2020-12-05', '2026-04-25');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (45, 'Sport', 'Football', 70694, '2022-09-05', '2024-07-07');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (46, 'Sport', 'Football', 88180, '2020-01-03', '2024-01-08');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (47, 'Sport', 'Football', 96955, '2022-12-05', '2024-12-16');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (48, 'Sport', 'Football', 77265, '2020-08-01', '2024-04-25');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (49, 'Sport', 'Football', 93806, '2021-06-06', '2025-04-28');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (50, 'Sport', 'Football', 80436, '2020-06-02', '2024-10-07');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (51, 'Sport', 'Football', 107698, '2023-09-05', '2025-10-08');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (52, 'Sport', 'Football', 110310, '2023-04-06', '2026-01-10');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (53, 'Sport', 'Football', 98607, '2023-05-04', '2024-09-19');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (54, 'Sport', 'Football', 111771, '2023-10-04', '2024-11-11');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (55, 'Sport', 'Football', 103267, '2023-03-02', '2025-03-10');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (56, 'Sport', 'Football', 93545, '2022-09-05', '2026-11-27');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (57, 'Sport', 'Football', 110463, '2020-07-01', '2026-10-13');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (58, 'Sport', 'Football', 99769, '2023-05-03', '2026-09-20');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (59, 'Sport', 'Football', 104945, '2023-11-04', '2026-06-20');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (60, 'Sport', 'Football', 117627, '2022-01-04', '2025-08-15');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (61, 'Sport', 'Basketball', 155605, '2020-03-06', '2026-01-07');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (62, 'Sport', 'Basketball', 162287, '2021-04-05', '2026-03-23');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (63, 'Sport', 'Basketball', 166569, '2021-09-06', '2024-04-08');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (64, 'Sport', 'Basketball', 164241, '2021-04-03', '2025-05-01');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (65, 'Sport', 'Basketball', 218288, '2020-07-04', '2024-10-07');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (66, 'Sport', 'Basketball', 150341, '2021-09-04', '2024-07-08');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (67, 'Sport', 'Basketball', 188940, '2020-04-04', '2024-07-26');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (68, 'Sport', 'Basketball', 226256, '2020-06-06', '2026-02-06');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (69, 'Sport', 'Basketball', 137371, '2022-01-06', '2026-10-01');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (70, 'Sport', 'Basketball', 149819, '2022-09-04', '2026-03-16');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (71, 'Sport', 'Basketball', 142645, '2023-02-01', '2024-09-13');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (72, 'Sport', 'Basketball', 197347, '2021-05-05', '2025-12-01');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (73, 'Sport', 'Basketball', 144013, '2023-07-02', '2024-04-28');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (74, 'Sport', 'Basketball', 117309, '2022-12-02', '2024-03-25');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (75, 'Sport', 'Basketball', 135298, '2022-12-06', '2024-07-03');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (76, 'Sport', 'Basketball', 135253, '2022-12-02', '2026-07-13');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (77, 'Sport', 'Basketball', 114414, '2022-05-03', '2025-01-17');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (78, 'Sport', 'Basketball', 121816, '2023-05-06', '2026-04-21');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (79, 'Sport', 'Basketball', 124189, '2023-12-04', '2026-01-04');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (80, 'Sport', 'Basketball', 116771, '2022-02-05', '2025-02-07');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (81, 'Sport', 'Basketball', 144058, '2023-08-05', '2025-05-02');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (82, 'Sport', 'Basketball', 134779, '2023-12-01', '2024-10-03');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (83, 'Sport', 'Basketball', 130349, '2022-10-06', '2026-12-17');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (84, 'Sport', 'Basketball', 119109, '2022-07-05', '2025-06-22');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (85, 'Sport', 'Swimming', 156526, '2023-09-06', '2024-11-20');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (86, 'Sport', 'Swimming', 138367, '2023-10-01', '2026-03-23');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (87, 'Sport', 'Swimming', 140162, '2022-02-06', '2025-11-07');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (88, 'Sport', 'Swimming', 145097, '2022-11-03', '2026-01-09');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (89, 'Sport', 'Swimming', 127079, '2022-01-05', '2025-06-13');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (90, 'Sport', 'Swimming', 123290, '2023-03-03', '2026-08-10');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (91, 'Sport', 'Swimming', 159542, '2023-11-05', '2025-07-07');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (92, 'Sport', 'Swimming', 149449, '2022-04-01', '2026-04-09');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (93, 'Sport', 'Swimming', 122025, '2022-12-04', '2025-02-20');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (94, 'Sport', 'Swimming', 158108, '2022-03-02', '2026-08-19');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (95, 'Sport', 'Kung Fu', 101586, '2022-03-05', '2024-07-03');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (96, 'Sport', 'Kung Fu', 91671, '2022-07-04', '2025-03-18');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (97, 'Sport', 'Kung Fu', 91071, '2023-11-06', '2025-01-11');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (98, 'Sport', 'Kung Fu', 112574, '2022-09-06', '2024-02-09');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (99, 'Sport', 'Kung Fu', 95913, '2022-12-03', '2025-08-26');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (100, 'Sport', 'Kung Fu', 104142, '2022-10-03', '2026-07-07');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (101, 'Sport', 'Kung Fu', 104972, '2023-06-02', '2024-01-19');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (102, 'Sport', 'Kung Fu', 91490, '2023-06-03', '2025-04-18');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (103, 'Sport', 'Kung Fu', 99797, '2022-03-05', '2024-05-12');
+INSERT INTO `Club_DB`.`Pro_Player` (`Player_SSN`, `Management_Name`, `SportName`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (104, 'Sport', 'Kung Fu', 106056, '2023-11-06', '2024-03-21');
+
+COMMIT;
+
+
+-- -----------------------------------------------------
 -- Data for table `Club_DB`.`Coach`
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `Club_DB`;
-INSERT INTO `Club_DB`.`Coach` (`Coach_SSN`, `SportName`) VALUES (105, 'Football');
-INSERT INTO `Club_DB`.`Coach` (`Coach_SSN`, `SportName`) VALUES (106, 'Football');
-INSERT INTO `Club_DB`.`Coach` (`Coach_SSN`, `SportName`) VALUES (107, 'Basketball');
-INSERT INTO `Club_DB`.`Coach` (`Coach_SSN`, `SportName`) VALUES (108, 'Basketball');
-INSERT INTO `Club_DB`.`Coach` (`Coach_SSN`, `SportName`) VALUES (109, 'Swimming');
-INSERT INTO `Club_DB`.`Coach` (`Coach_SSN`, `SportName`) VALUES (110, 'Swimming');
-INSERT INTO `Club_DB`.`Coach` (`Coach_SSN`, `SportName`) VALUES (111, 'Swimming');
-INSERT INTO `Club_DB`.`Coach` (`Coach_SSN`, `SportName`) VALUES (112, 'Kung Fu');
-INSERT INTO `Club_DB`.`Coach` (`Coach_SSN`, `SportName`) VALUES (113, 'Kung Fu');
-INSERT INTO `Club_DB`.`Coach` (`Coach_SSN`, `SportName`) VALUES (114, 'Kung Fu');
+INSERT INTO `Club_DB`.`Coach` (`Coach_SSN`, `SportName`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (105, 'Football', 'Sport', 194682, '2021-04-03', '2025-10-25');
+INSERT INTO `Club_DB`.`Coach` (`Coach_SSN`, `SportName`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (106, 'Football', 'Sport', 156649, '2020-09-04', '2025-01-08');
+INSERT INTO `Club_DB`.`Coach` (`Coach_SSN`, `SportName`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (107, 'Basketball', 'Sport', 125188, '2022-10-05', '2025-01-21');
+INSERT INTO `Club_DB`.`Coach` (`Coach_SSN`, `SportName`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (108, 'Basketball', 'Sport', 134850, '2019-03-06', '2026-11-24');
+INSERT INTO `Club_DB`.`Coach` (`Coach_SSN`, `SportName`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (109, 'Swimming', 'Sport', 127778, '2021-11-06', '2024-01-16');
+INSERT INTO `Club_DB`.`Coach` (`Coach_SSN`, `SportName`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (110, 'Swimming', 'Sport', 124745, '2021-09-05', '2025-08-26');
+INSERT INTO `Club_DB`.`Coach` (`Coach_SSN`, `SportName`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (111, 'Swimming', 'Sport', 145006, '2020-12-06', '2024-12-22');
+INSERT INTO `Club_DB`.`Coach` (`Coach_SSN`, `SportName`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (112, 'Kung Fu', 'Sport', 123781, '2021-08-02', '2024-02-14');
+INSERT INTO `Club_DB`.`Coach` (`Coach_SSN`, `SportName`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (113, 'Kung Fu', 'Sport', 137288, '2021-08-04', '2024-11-27');
+INSERT INTO `Club_DB`.`Coach` (`Coach_SSN`, `SportName`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (114, 'Kung Fu', 'Sport', 124605, '2020-08-06', '2025-12-13');
 
 COMMIT;
 
@@ -1141,6 +1327,8 @@ INSERT INTO `Club_DB`.`Event` (`Name`, `Date`) VALUES ('Swimming Championship', 
 INSERT INTO `Club_DB`.`Event` (`Name`, `Date`) VALUES ('FIFA Tournament', '2024-01-12');
 INSERT INTO `Club_DB`.`Event` (`Name`, `Date`) VALUES ('New Years Concert', '2023-12-31');
 INSERT INTO `Club_DB`.`Event` (`Name`, `Date`) VALUES ('Watch Party', '2024-03-01');
+INSERT INTO `Club_DB`.`Event` (`Name`, `Date`) VALUES ('Ramadan 5on5 Football', '2024-03-20');
+INSERT INTO `Club_DB`.`Event` (`Name`, `Date`) VALUES ('Ramadan 5on5 Football Final', '2024-04-01');
 
 COMMIT;
 
@@ -1151,23 +1339,10 @@ COMMIT;
 START TRANSACTION;
 USE `Club_DB`;
 INSERT INTO `Club_DB`.`Sponsor` (`Name`, `Website`, `Event_Name`) VALUES ('Nike', 'Nike.com', 'Swimming Championship');
-INSERT INTO `Club_DB`.`Sponsor` (`Name`, `Website`, `Event_Name`) VALUES ('WE', 'te.eg', 'Fifa tournoment');
+INSERT INTO `Club_DB`.`Sponsor` (`Name`, `Website`, `Event_Name`) VALUES ('WE', 'te.eg', 'Fifa tournament');
 INSERT INTO `Club_DB`.`Sponsor` (`Name`, `Website`, `Event_Name`) VALUES ('BanqueMisr', 'banquemisr.com', 'New Years Concert');
 INSERT INTO `Club_DB`.`Sponsor` (`Name`, `Website`, `Event_Name`) VALUES ('Watch It', 'watchit.com', 'Watch Party');
-
-COMMIT;
-
-
--- -----------------------------------------------------
--- Data for table `Club_DB`.`Management`
--- -----------------------------------------------------
-START TRANSACTION;
-USE `Club_DB`;
-INSERT INTO `Club_DB`.`Management` (`Name`, `Manager_SSN`) VALUES ('Sport',  130);
-INSERT INTO `Club_DB`.`Management` (`Name`, `Manager_SSN`) VALUES ('Events',  135);
-INSERT INTO `Club_DB`.`Management` (`Name`, `Manager_SSN`) VALUES ('Quality',  140);
-INSERT INTO `Club_DB`.`Management` (`Name`, `Manager_SSN`) VALUES ('Services',  148);
-INSERT INTO `Club_DB`.`Management` (`Name`, `Manager_SSN`) VALUES ('Board',  149);
+INSERT INTO `Club_DB`.`Sponsor` (`Name`, `Website`, `Event_Name`) VALUES ('Nike ', 'Nike.com', 'Ramadan 5on5 Football');
 
 COMMIT;
 
@@ -1183,7 +1358,7 @@ INSERT INTO `Club_DB`.`Catering` (`Name`, `Management_Name`, `NumOfBranches`, `T
 INSERT INTO `Club_DB`.`Catering` (`Name`, `Management_Name`, `NumOfBranches`, `Type`) VALUES ('Buffalo Burger', 'Catering', 1, 'Restaurant');
 INSERT INTO `Club_DB`.`Catering` (`Name`, `Management_Name`, `NumOfBranches`, `Type`) VALUES ('Blaban', 'Catering', 1, 'Restaurant');
 INSERT INTO `Club_DB`.`Catering` (`Name`, `Management_Name`, `NumOfBranches`, `Type`) VALUES ('Vamos', 'Catering', 3, 'Cafe');
-INSERT INTO `Club_DB`.`Catering` (`Name`, `Management_Name`, `NumOfBranches`, `Type`) VALUES ('Costa Cafe', 'Catering', 1, 'Cafe');
+INSERT INTO `Club_DB`.`Catering` (`Name`, `Management_Name`, `NumOfBranches`, `Type`) VALUES ('Costa Coffee', 'Catering', 1, 'Cafe');
 
 COMMIT;
 
@@ -1399,6 +1574,10 @@ INSERT INTO `Club_DB`.`Event_Managment_Place` (`Event_Name`, `PlaceName`, `Manag
 INSERT INTO `Club_DB`.`Event_Managment_Place` (`Event_Name`, `PlaceName`, `Management_Name`) VALUES ('FIFA Tournament', 'Activity Hall 1', 'Events');
 INSERT INTO `Club_DB`.`Event_Managment_Place` (`Event_Name`, `PlaceName`, `Management_Name`) VALUES ('New Years Concert', 'Indoor Sports Hall 1', 'Events');
 INSERT INTO `Club_DB`.`Event_Managment_Place` (`Event_Name`, `PlaceName`, `Management_Name`) VALUES ('Watch Party', 'Poolside Lounge', 'Events');
+INSERT INTO `Club_DB`.`Event_Managment_Place` (`Event_Name`, `PlaceName`, `Management_Name`) VALUES ('Ramadan 5on5 Football', '5on5 Football Field 1', 'Events');
+INSERT INTO `Club_DB`.`Event_Managment_Place` (`Event_Name`, `PlaceName`, `Management_Name`) VALUES ('Ramadan 5on5 Football', '5on5 Football Field 2', 'Events');
+INSERT INTO `Club_DB`.`Event_Managment_Place` (`Event_Name`, `PlaceName`, `Management_Name`) VALUES ('Ramadan 5on5 Football', '5on5 Football Field 3', 'Events');
+INSERT INTO `Club_DB`.`Event_Managment_Place` (`Event_Name`, `PlaceName`, `Management_Name`) VALUES ('Ramadan 5on5 Football Final', '5on5 Football Field 1', 'Events');
 
 COMMIT;
 
@@ -1562,140 +1741,17 @@ INSERT INTO `Club_DB`.`Menu` (`Catering_Name`, `Item`, `Price`) VALUES ('VAMOS',
 INSERT INTO `Club_DB`.`Menu` (`Catering_Name`, `Item`, `Price`) VALUES ('VAMOS', 'French Coffee', 20.0);
 INSERT INTO `Club_DB`.`Menu` (`Catering_Name`, `Item`, `Price`) VALUES ('VAMOS', 'Breakfast Sandwich', 16.0);
 INSERT INTO `Club_DB`.`Menu` (`Catering_Name`, `Item`, `Price`) VALUES ('VAMOS', 'Fresh Juice', 33.0);
-INSERT INTO `Club_DB`.`Menu` (`Catering_Name`, `Item`, `Price`) VALUES ('Costa Cafe', 'Croissant', 25.0);
-INSERT INTO `Club_DB`.`Menu` (`Catering_Name`, `Item`, `Price`) VALUES ('Costa Cafe', 'Ice coffee', 45.0);
-INSERT INTO `Club_DB`.`Menu` (`Catering_Name`, `Item`, `Price`) VALUES ('Costa Cafe', 'espresso', 25.0);
-INSERT INTO `Club_DB`.`Menu` (`Catering_Name`, `Item`, `Price`) VALUES ('Costa Cafe', 'Club Sandwich', 65.0);
-INSERT INTO `Club_DB`.`Menu` (`Catering_Name`, `Item`, `Price`) VALUES ('Costa Cafe', 'Cappuccino', 40.0);
+INSERT INTO `Club_DB`.`Menu` (`Catering_Name`, `Item`, `Price`) VALUES ('Costa Coffee', 'Croissant', 25.0);
+INSERT INTO `Club_DB`.`Menu` (`Catering_Name`, `Item`, `Price`) VALUES ('Costa Coffee', 'Ice coffee', 45.0);
+INSERT INTO `Club_DB`.`Menu` (`Catering_Name`, `Item`, `Price`) VALUES ('Costa Coffee', 'espresso', 25.0);
+INSERT INTO `Club_DB`.`Menu` (`Catering_Name`, `Item`, `Price`) VALUES ('Costa Coffee', 'Club Sandwich', 65.0);
+INSERT INTO `Club_DB`.`Menu` (`Catering_Name`, `Item`, `Price`) VALUES ('Costa Coffee', 'Cappuccino', 40.0);
 INSERT INTO `Club_DB`.`Menu` (`Catering_Name`, `Item`, `Price`) VALUES ('Azure', 'Tehina', 20.0);
 INSERT INTO `Club_DB`.`Menu` (`Catering_Name`, `Item`, `Price`) VALUES ('Azure', 'Cesar Salad', 45.0);
 INSERT INTO `Club_DB`.`Menu` (`Catering_Name`, `Item`, `Price`) VALUES ('Azure', 'Rice', 18.0);
 INSERT INTO `Club_DB`.`Menu` (`Catering_Name`, `Item`, `Price`) VALUES ('Azure', 'Molokhia', 45.0);
 INSERT INTO `Club_DB`.`Menu` (`Catering_Name`, `Item`, `Price`) VALUES ('Azure', 'Fahita Sandwich', 50.0);
 INSERT INTO `Club_DB`.`Menu` (`Catering_Name`, `Item`, `Price`) VALUES ('Azure', 'French Fries', 26.0);
-
-COMMIT;
-
-
--- -----------------------------------------------------
--- Data for table `Club_DB`.`Pro`
--- -----------------------------------------------------
-START TRANSACTION;
-USE `Club_DB`;
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (1, -1, 'Sport', 409916, '2022-03-03', '2025-06-23');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (2, -1, 'Sport', 282056, '2021-08-05', '2025-10-02');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (3, -1, 'Sport', 422345, '2020-10-04', '2024-01-12');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (4, -1, 'Sport', 424615, '2023-12-05', '2026-10-27');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (5, -1, 'Sport', 426611, '2020-10-05', '2026-04-18');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (6, -1, 'Sport', 373424, '2022-07-06', '2024-06-14');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (7, -1, 'Sport', 213697, '2020-01-05', '2025-12-06');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (8, -1, 'Sport', 292068, '2023-06-03', '2026-03-12');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (9, -1, 'Sport', 415439, '2023-05-01', '2024-05-03');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (10, -1, 'Sport', 433134, '2022-08-03', '2025-09-17');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (11, -1, 'Sport', 201077, '2020-05-06', '2024-08-11');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (12, -1, 'Sport', 338020, '2022-09-05', '2026-12-14');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (13, -1, 'Sport', 339133, '2023-06-01', '2024-06-23');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (14, -1, 'Sport', 210788, '2022-08-01', '2025-07-24');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (15, -1, 'Sport', 276596, '2020-06-01', '2025-10-24');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (16, -1, 'Sport', 385569, '2022-11-05', '2025-08-04');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (17, -1, 'Sport', 337675, '2023-09-04', '2026-08-26');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (18, -1, 'Sport', 336118, '2022-07-06', '2024-05-13');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (19, -1, 'Sport', 363535, '2021-07-03', '2025-01-03');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (20, -1, 'Sport', 374058, '2022-07-04', '2025-04-08');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (21, -1, 'Sport', 219003, '2022-09-01', '2025-03-22');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (22, -1, 'Sport', 281909, '2022-10-02', '2025-07-01');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (23, -1, 'Sport', 329828, '2022-08-05', '2026-08-16');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (24, -1, 'Sport', 352318, '2020-05-03', '2024-12-23');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (25, -1, 'Sport', 276201, '2020-11-02', '2025-07-25');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (26, -1, 'Sport', 361562, '2021-08-03', '2025-10-23');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (27, -1, 'Sport', 225535, '2022-11-05', '2024-07-25');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (28, -1, 'Sport', 262794, '2022-08-05', '2026-05-27');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (29, -1, 'Sport', 311242, '2023-08-04', '2024-08-02');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (30, -1, 'Sport', 399745, '2021-01-02', '2024-11-11');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (31, -1, 'Sport', 105811, '2020-02-02', '2025-03-02');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (32, -1, 'Sport', 97601, '2021-10-04', '2026-02-13');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (33, -1, 'Sport', 81436, '2020-06-03', '2024-12-15');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (34, -1, 'Sport', 105298, '2023-02-03', '2026-08-18');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (35, -1, 'Sport', 102287, '2020-10-04', '2024-05-27');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (36, -1, 'Sport', 78836, '2020-01-06', '2024-05-02');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (37, -1, 'Sport', 98450, '2022-11-03', '2025-12-10');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (38, -1, 'Sport', 81671, '2023-12-04', '2024-12-18');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (39, -1, 'Sport', 118825, '2023-04-03', '2025-04-22');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (40, -1, 'Sport', 86308, '2021-12-01', '2025-12-22');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (41, -1, 'Sport', 116795, '2023-05-01', '2024-04-18');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (42, -1, 'Sport', 95344, '2022-01-06', '2025-11-16');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (43, -1, 'Sport', 91095, '2023-07-05', '2024-01-16');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (44, -1, 'Sport', 108190, '2020-12-05', '2026-04-25');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (45, -1, 'Sport', 70694, '2022-09-05', '2024-07-07');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (46, -1, 'Sport', 88180, '2020-01-03', '2024-01-08');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (47, -1, 'Sport', 96955, '2022-12-05', '2024-12-16');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (48, -1, 'Sport', 77265, '2020-08-01', '2024-04-25');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (49, -1, 'Sport', 93806, '2021-06-06', '2025-04-28');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (50, -1, 'Sport', 80436, '2020-06-02', '2024-10-07');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (51, -1, 'Sport', 107698, '2023-09-05', '2025-10-08');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (52, -1, 'Sport', 110310, '2023-04-06', '2026-01-10');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (53, -1, 'Sport', 98607, '2023-05-04', '2024-09-19');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (54, -1, 'Sport', 111771, '2023-10-04', '2024-11-11');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (55, -1, 'Sport', 103267, '2023-03-02', '2025-03-10');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (56, -1, 'Sport', 93545, '2022-09-05', '2026-11-27');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (57, -1, 'Sport', 110463, '2020-07-01', '2026-10-13');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (58, -1, 'Sport', 99769, '2023-05-03', '2026-09-20');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (59, -1, 'Sport', 104945, '2023-11-04', '2026-06-20');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (60, -1, 'Sport', 117627, '2022-01-04', '2025-08-15');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (61, -1, 'Sport', 155605, '2020-03-06', '2026-01-07');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (62, -1, 'Sport', 162287, '2021-04-05', '2026-03-23');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (63, -1, 'Sport', 166569, '2021-09-06', '2024-04-08');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (64, -1, 'Sport', 164241, '2021-04-03', '2025-05-01');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (65, -1, 'Sport', 218288, '2020-07-04', '2024-10-07');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (66, -1, 'Sport', 150341, '2021-09-04', '2024-07-08');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (67, -1, 'Sport', 188940, '2020-04-04', '2024-07-26');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (68, -1, 'Sport', 226256, '2020-06-06', '2026-02-06');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (69, -1, 'Sport', 137371, '2022-01-06', '2026-10-01');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (70, -1, 'Sport', 149819, '2022-09-04', '2026-03-16');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (71, -1, 'Sport', 142645, '2023-02-01', '2024-09-13');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (72, -1, 'Sport', 197347, '2021-05-05', '2025-12-01');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (73, -1, 'Sport', 144013, '2023-07-02', '2024-04-28');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (74, -1, 'Sport', 117309, '2022-12-02', '2024-03-25');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (75, -1, 'Sport', 135298, '2022-12-06', '2024-07-03');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (76, -1, 'Sport', 135253, '2022-12-02', '2026-07-13');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (77, -1, 'Sport', 114414, '2022-05-03', '2025-01-17');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (78, -1, 'Sport', 121816, '2023-05-06', '2026-04-21');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (79, -1, 'Sport', 124189, '2023-12-04', '2026-01-04');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (80, -1, 'Sport', 116771, '2022-02-05', '2025-02-07');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (81, -1, 'Sport', 144058, '2023-08-05', '2025-05-02');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (82, -1, 'Sport', 134779, '2023-12-01', '2024-10-03');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (83, -1, 'Sport', 130349, '2022-10-06', '2026-12-17');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (84, -1, 'Sport', 119109, '2022-07-05', '2025-06-22');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (85, -1, 'Sport', 156526, '2023-09-06', '2024-11-20');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (86, -1, 'Sport', 138367, '2023-10-01', '2026-03-23');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (87, -1, 'Sport', 140162, '2022-02-06', '2025-11-07');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (88, -1, 'Sport', 145097, '2022-11-03', '2026-01-09');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (89, -1, 'Sport', 127079, '2022-01-05', '2025-06-13');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (90, -1, 'Sport', 123290, '2023-03-03', '2026-08-10');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (91, -1, 'Sport', 159542, '2023-11-05', '2025-07-07');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (92, -1, 'Sport', 149449, '2022-04-01', '2026-04-09');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (93, -1, 'Sport', 122025, '2022-12-04', '2025-02-20');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (94, -1, 'Sport', 158108, '2022-03-02', '2026-08-19');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (95, -1, 'Sport', 101586, '2022-03-05', '2024-07-03');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (96, -1, 'Sport', 91671, '2022-07-04', '2025-03-18');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (97, -1, 'Sport', 91071, '2023-11-06', '2025-01-11');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (98, -1, 'Sport', 112574, '2022-09-06', '2024-02-09');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (99, -1, 'Sport', 95913, '2022-12-03', '2025-08-26');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (100, -1, 'Sport', 104142, '2022-10-03', '2026-07-07');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (101, -1, 'Sport', 104972, '2023-06-02', '2024-01-19');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (102, -1, 'Sport', 91490, '2023-06-03', '2025-04-18');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (103, -1, 'Sport', 99797, '2022-03-05', '2024-05-12');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (104, -1, 'Sport', 106056, '2023-11-06', '2024-03-21');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (-1, 105, 'Sport', 194682, '2021-04-03', '2025-10-25');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (-1, 106, 'Sport', 156649, '2020-09-04', '2025-01-08');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (-1, 107, 'Sport', 125188, '2022-10-05', '2025-01-21');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (-1, 108, 'Sport', 134850, '2019-03-06', '2026-11-24');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (-1, 109, 'Sport', 127778, '2021-11-06', '2024-01-16');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (-1, 110, 'Sport', 124745, '2021-09-05', '2025-08-26');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (-1, 111, 'Sport', 145006, '2020-12-06', '2024-12-22');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (-1, 112, 'Sport', 123781, '2021-08-02', '2024-02-14');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (-1, 113, 'Sport', 137288, '2021-08-04', '2024-11-27');
-INSERT INTO `Club_DB`.`Pro` (`Player_SSN`, `Coach_SSN`, `Management_Name`, `Salary`, `ContractStart`, `ContractEnd`) VALUES (-1, 114, 'Sport', 124605, '2020-08-06', '2025-12-13');
 
 COMMIT;
 
@@ -1709,6 +1765,95 @@ INSERT INTO `Club_DB`.`Team` (`SportName`, `TeamName`, `Coach_SSN`) VALUES ('Foo
 INSERT INTO `Club_DB`.`Team` (`SportName`, `TeamName`, `Coach_SSN`) VALUES ('Football', 'Academy Team', 106);
 INSERT INTO `Club_DB`.`Team` (`SportName`, `TeamName`, `Coach_SSN`) VALUES ('Basketball', 'Mens Team', 107);
 INSERT INTO `Club_DB`.`Team` (`SportName`, `TeamName`, `Coach_SSN`) VALUES ('Basketball', 'Womens Team', 108);
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `Club_DB`.`Player`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `Club_DB`;
+INSERT INTO `Club_DB`.`Player` (`PlayerSSN`, `Management_Name`, `SportName`, `subPrice`, `StartDate`) VALUES (268, 'Sport', 'Football', 450, '2019-07-26');
+INSERT INTO `Club_DB`.`Player` (`PlayerSSN`, `Management_Name`, `SportName`, `subPrice`, `StartDate`) VALUES (269, 'Sport', 'Football', 450, '2023-05-01');
+INSERT INTO `Club_DB`.`Player` (`PlayerSSN`, `Management_Name`, `SportName`, `subPrice`, `StartDate`) VALUES (270, 'Sport', 'Football', 450, '2019-12-11');
+INSERT INTO `Club_DB`.`Player` (`PlayerSSN`, `Management_Name`, `SportName`, `subPrice`, `StartDate`) VALUES (271, 'Sport', 'Football', 450, '2018-09-03');
+INSERT INTO `Club_DB`.`Player` (`PlayerSSN`, `Management_Name`, `SportName`, `subPrice`, `StartDate`) VALUES (272, 'Sport', 'Football', 450, '2019-12-21');
+INSERT INTO `Club_DB`.`Player` (`PlayerSSN`, `Management_Name`, `SportName`, `subPrice`, `StartDate`) VALUES (273, 'Sport', 'Football', 450, '2020-09-26');
+INSERT INTO `Club_DB`.`Player` (`PlayerSSN`, `Management_Name`, `SportName`, `subPrice`, `StartDate`) VALUES (274, 'Sport', 'Football', 450, '2018-12-26');
+INSERT INTO `Club_DB`.`Player` (`PlayerSSN`, `Management_Name`, `SportName`, `subPrice`, `StartDate`) VALUES (275, 'Sport', 'Football', 450, '2023-07-30');
+INSERT INTO `Club_DB`.`Player` (`PlayerSSN`, `Management_Name`, `SportName`, `subPrice`, `StartDate`) VALUES (276, 'Sport', 'Football', 450, '2020-03-21');
+INSERT INTO `Club_DB`.`Player` (`PlayerSSN`, `Management_Name`, `SportName`, `subPrice`, `StartDate`) VALUES (277, 'Sport', 'Football', 450, '2020-02-24');
+INSERT INTO `Club_DB`.`Player` (`PlayerSSN`, `Management_Name`, `SportName`, `subPrice`, `StartDate`) VALUES (278, 'Sport', 'Football', 450, '2019-03-30');
+INSERT INTO `Club_DB`.`Player` (`PlayerSSN`, `Management_Name`, `SportName`, `subPrice`, `StartDate`) VALUES (279, 'Sport', 'Football', 450, '2019-10-26');
+INSERT INTO `Club_DB`.`Player` (`PlayerSSN`, `Management_Name`, `SportName`, `subPrice`, `StartDate`) VALUES (280, 'Sport', 'Football', 450, '2020-04-30');
+INSERT INTO `Club_DB`.`Player` (`PlayerSSN`, `Management_Name`, `SportName`, `subPrice`, `StartDate`) VALUES (281, 'Sport', 'Football', 450, '2018-09-23');
+INSERT INTO `Club_DB`.`Player` (`PlayerSSN`, `Management_Name`, `SportName`, `subPrice`, `StartDate`) VALUES (282, 'Sport', 'Football', 450, '2020-12-17');
+INSERT INTO `Club_DB`.`Player` (`PlayerSSN`, `Management_Name`, `SportName`, `subPrice`, `StartDate`) VALUES (283, 'Sport', 'Football', 450, '2018-12-19');
+INSERT INTO `Club_DB`.`Player` (`PlayerSSN`, `Management_Name`, `SportName`, `subPrice`, `StartDate`) VALUES (284, 'Sport', 'Football', 450, '2022-06-24');
+INSERT INTO `Club_DB`.`Player` (`PlayerSSN`, `Management_Name`, `SportName`, `subPrice`, `StartDate`) VALUES (285, 'Sport', 'Football', 450, '2020-01-31');
+INSERT INTO `Club_DB`.`Player` (`PlayerSSN`, `Management_Name`, `SportName`, `subPrice`, `StartDate`) VALUES (286, 'Sport', 'Football', 450, '2018-06-29');
+INSERT INTO `Club_DB`.`Player` (`PlayerSSN`, `Management_Name`, `SportName`, `subPrice`, `StartDate`) VALUES (287, 'Sport', 'Football', 450, '2019-07-23');
+INSERT INTO `Club_DB`.`Player` (`PlayerSSN`, `Management_Name`, `SportName`, `subPrice`, `StartDate`) VALUES (288, 'Sport', 'Basketball', 300, '2020-12-28');
+INSERT INTO `Club_DB`.`Player` (`PlayerSSN`, `Management_Name`, `SportName`, `subPrice`, `StartDate`) VALUES (289, 'Sport', 'Basketball', 300, '2023-12-10');
+INSERT INTO `Club_DB`.`Player` (`PlayerSSN`, `Management_Name`, `SportName`, `subPrice`, `StartDate`) VALUES (290, 'Sport', 'Basketball', 300, '2022-04-23');
+INSERT INTO `Club_DB`.`Player` (`PlayerSSN`, `Management_Name`, `SportName`, `subPrice`, `StartDate`) VALUES (291, 'Sport', 'Basketball', 300, '2022-06-25');
+INSERT INTO `Club_DB`.`Player` (`PlayerSSN`, `Management_Name`, `SportName`, `subPrice`, `StartDate`) VALUES (292, 'Sport', 'Basketball', 300, '2021-09-23');
+INSERT INTO `Club_DB`.`Player` (`PlayerSSN`, `Management_Name`, `SportName`, `subPrice`, `StartDate`) VALUES (293, 'Sport', 'Basketball', 300, '2018-12-14');
+INSERT INTO `Club_DB`.`Player` (`PlayerSSN`, `Management_Name`, `SportName`, `subPrice`, `StartDate`) VALUES (294, 'Sport', 'Basketball', 300, '2022-11-07');
+INSERT INTO `Club_DB`.`Player` (`PlayerSSN`, `Management_Name`, `SportName`, `subPrice`, `StartDate`) VALUES (295, 'Sport', 'Basketball', 300, '2019-07-24');
+INSERT INTO `Club_DB`.`Player` (`PlayerSSN`, `Management_Name`, `SportName`, `subPrice`, `StartDate`) VALUES (296, 'Sport', 'Basketball', 300, '2023-11-23');
+INSERT INTO `Club_DB`.`Player` (`PlayerSSN`, `Management_Name`, `SportName`, `subPrice`, `StartDate`) VALUES (297, 'Sport', 'Basketball', 300, '2023-07-03');
+INSERT INTO `Club_DB`.`Player` (`PlayerSSN`, `Management_Name`, `SportName`, `subPrice`, `StartDate`) VALUES (298, 'Sport', 'Basketball', 300, '2022-11-24');
+INSERT INTO `Club_DB`.`Player` (`PlayerSSN`, `Management_Name`, `SportName`, `subPrice`, `StartDate`) VALUES (299, 'Sport', 'Basketball', 300, '2019-01-21');
+INSERT INTO `Club_DB`.`Player` (`PlayerSSN`, `Management_Name`, `SportName`, `subPrice`, `StartDate`) VALUES (300, 'Sport', 'Basketball', 300, '2018-11-21');
+INSERT INTO `Club_DB`.`Player` (`PlayerSSN`, `Management_Name`, `SportName`, `subPrice`, `StartDate`) VALUES (301, 'Sport', 'Basketball', 300, '2019-02-01');
+INSERT INTO `Club_DB`.`Player` (`PlayerSSN`, `Management_Name`, `SportName`, `subPrice`, `StartDate`) VALUES (302, 'Sport', 'Basketball', 300, '2023-09-18');
+INSERT INTO `Club_DB`.`Player` (`PlayerSSN`, `Management_Name`, `SportName`, `subPrice`, `StartDate`) VALUES (303, 'Sport', 'Basketball', 300, '2023-12-21');
+INSERT INTO `Club_DB`.`Player` (`PlayerSSN`, `Management_Name`, `SportName`, `subPrice`, `StartDate`) VALUES (304, 'Sport', 'Basketball', 300, '2020-11-24');
+INSERT INTO `Club_DB`.`Player` (`PlayerSSN`, `Management_Name`, `SportName`, `subPrice`, `StartDate`) VALUES (305, 'Sport', 'Basketball', 300, '2019-12-08');
+INSERT INTO `Club_DB`.`Player` (`PlayerSSN`, `Management_Name`, `SportName`, `subPrice`, `StartDate`) VALUES (306, 'Sport', 'Basketball', 300, '2023-10-05 ');
+INSERT INTO `Club_DB`.`Player` (`PlayerSSN`, `Management_Name`, `SportName`, `subPrice`, `StartDate`) VALUES (307, 'Sport', 'Basketball', 300, '2022-11-23');
+INSERT INTO `Club_DB`.`Player` (`PlayerSSN`, `Management_Name`, `SportName`, `subPrice`, `StartDate`) VALUES (308, 'Sport', 'Swimming', 400, '2023-11-12');
+INSERT INTO `Club_DB`.`Player` (`PlayerSSN`, `Management_Name`, `SportName`, `subPrice`, `StartDate`) VALUES (309, 'Sport', 'Swimming', 400, '2019-11-29');
+INSERT INTO `Club_DB`.`Player` (`PlayerSSN`, `Management_Name`, `SportName`, `subPrice`, `StartDate`) VALUES (310, 'Sport', 'Swimming', 400, '2023-10-30');
+INSERT INTO `Club_DB`.`Player` (`PlayerSSN`, `Management_Name`, `SportName`, `subPrice`, `StartDate`) VALUES (311, 'Sport', 'Swimming', 400, '2020-12-09');
+INSERT INTO `Club_DB`.`Player` (`PlayerSSN`, `Management_Name`, `SportName`, `subPrice`, `StartDate`) VALUES (312, 'Sport', 'Swimming', 400, '2019-05-03');
+INSERT INTO `Club_DB`.`Player` (`PlayerSSN`, `Management_Name`, `SportName`, `subPrice`, `StartDate`) VALUES (313, 'Sport', 'Swimming', 400, '2022-05-16');
+INSERT INTO `Club_DB`.`Player` (`PlayerSSN`, `Management_Name`, `SportName`, `subPrice`, `StartDate`) VALUES (314, 'Sport', 'Swimming', 400, '2023-07-15');
+INSERT INTO `Club_DB`.`Player` (`PlayerSSN`, `Management_Name`, `SportName`, `subPrice`, `StartDate`) VALUES (315, 'Sport', 'Swimming', 400, '2021-11-14');
+INSERT INTO `Club_DB`.`Player` (`PlayerSSN`, `Management_Name`, `SportName`, `subPrice`, `StartDate`) VALUES (316, 'Sport', 'Swimming', 400, '2023-07-09');
+INSERT INTO `Club_DB`.`Player` (`PlayerSSN`, `Management_Name`, `SportName`, `subPrice`, `StartDate`) VALUES (317, 'Sport', 'Swimming', 400, '2022-10-16');
+INSERT INTO `Club_DB`.`Player` (`PlayerSSN`, `Management_Name`, `SportName`, `subPrice`, `StartDate`) VALUES (318, 'Sport', 'Swimming', 400, '2021-12-28');
+INSERT INTO `Club_DB`.`Player` (`PlayerSSN`, `Management_Name`, `SportName`, `subPrice`, `StartDate`) VALUES (319, 'Sport', 'Swimming', 400, '2023-11-11');
+INSERT INTO `Club_DB`.`Player` (`PlayerSSN`, `Management_Name`, `SportName`, `subPrice`, `StartDate`) VALUES (320, 'Sport', 'Swimming', 400, '2021-04-19');
+INSERT INTO `Club_DB`.`Player` (`PlayerSSN`, `Management_Name`, `SportName`, `subPrice`, `StartDate`) VALUES (321, 'Sport', 'Swimming', 400, '2019-08-17');
+INSERT INTO `Club_DB`.`Player` (`PlayerSSN`, `Management_Name`, `SportName`, `subPrice`, `StartDate`) VALUES (322, 'Sport', 'Swimming', 400, '2022-11-18');
+INSERT INTO `Club_DB`.`Player` (`PlayerSSN`, `Management_Name`, `SportName`, `subPrice`, `StartDate`) VALUES (323, 'Sport', 'Swimming', 400, '2021-07-26');
+INSERT INTO `Club_DB`.`Player` (`PlayerSSN`, `Management_Name`, `SportName`, `subPrice`, `StartDate`) VALUES (324, 'Sport', 'Swimming', 400, '2022-01-03');
+INSERT INTO `Club_DB`.`Player` (`PlayerSSN`, `Management_Name`, `SportName`, `subPrice`, `StartDate`) VALUES (325, 'Sport', 'Swimming', 400, '2018-09-17');
+INSERT INTO `Club_DB`.`Player` (`PlayerSSN`, `Management_Name`, `SportName`, `subPrice`, `StartDate`) VALUES (326, 'Sport', 'Swimming', 400, '2021-04-03');
+INSERT INTO `Club_DB`.`Player` (`PlayerSSN`, `Management_Name`, `SportName`, `subPrice`, `StartDate`) VALUES (327, 'Sport', 'Swimming', 400, '2020-02-26');
+INSERT INTO `Club_DB`.`Player` (`PlayerSSN`, `Management_Name`, `SportName`, `subPrice`, `StartDate`) VALUES (328, 'Sport', 'Kung Fu', 250, '2020-12-19');
+INSERT INTO `Club_DB`.`Player` (`PlayerSSN`, `Management_Name`, `SportName`, `subPrice`, `StartDate`) VALUES (329, 'Sport', 'Kung Fu', 250, '2021-08-12');
+INSERT INTO `Club_DB`.`Player` (`PlayerSSN`, `Management_Name`, `SportName`, `subPrice`, `StartDate`) VALUES (330, 'Sport', 'Kung Fu', 250, '2019-01-17');
+INSERT INTO `Club_DB`.`Player` (`PlayerSSN`, `Management_Name`, `SportName`, `subPrice`, `StartDate`) VALUES (331, 'Sport', 'Kung Fu', 250, '2021-07-14');
+INSERT INTO `Club_DB`.`Player` (`PlayerSSN`, `Management_Name`, `SportName`, `subPrice`, `StartDate`) VALUES (332, 'Sport', 'Kung Fu', 250, '2019-02-27');
+INSERT INTO `Club_DB`.`Player` (`PlayerSSN`, `Management_Name`, `SportName`, `subPrice`, `StartDate`) VALUES (333, 'Sport', 'Kung Fu', 250, '2019-07-26');
+INSERT INTO `Club_DB`.`Player` (`PlayerSSN`, `Management_Name`, `SportName`, `subPrice`, `StartDate`) VALUES (334, 'Sport', 'Kung Fu', 250, '2023-04-17');
+INSERT INTO `Club_DB`.`Player` (`PlayerSSN`, `Management_Name`, `SportName`, `subPrice`, `StartDate`) VALUES (335, 'Sport', 'Kung Fu', 250, '2019-12-30');
+INSERT INTO `Club_DB`.`Player` (`PlayerSSN`, `Management_Name`, `SportName`, `subPrice`, `StartDate`) VALUES (336, 'Sport', 'Kung Fu', 250, '2022-11-17');
+INSERT INTO `Club_DB`.`Player` (`PlayerSSN`, `Management_Name`, `SportName`, `subPrice`, `StartDate`) VALUES (337, 'Sport', 'Kung Fu', 250, '2023-09-27');
+INSERT INTO `Club_DB`.`Player` (`PlayerSSN`, `Management_Name`, `SportName`, `subPrice`, `StartDate`) VALUES (338, 'Sport', 'Kung Fu', 250, '2019-03-27');
+INSERT INTO `Club_DB`.`Player` (`PlayerSSN`, `Management_Name`, `SportName`, `subPrice`, `StartDate`) VALUES (339, 'Sport', 'Kung Fu', 250, '2020-06-19');
+INSERT INTO `Club_DB`.`Player` (`PlayerSSN`, `Management_Name`, `SportName`, `subPrice`, `StartDate`) VALUES (340, 'Sport', 'Kung Fu', 250, '2019-09-27');
+INSERT INTO `Club_DB`.`Player` (`PlayerSSN`, `Management_Name`, `SportName`, `subPrice`, `StartDate`) VALUES (341, 'Sport', 'Kung Fu', 250, '2023-12-18');
+INSERT INTO `Club_DB`.`Player` (`PlayerSSN`, `Management_Name`, `SportName`, `subPrice`, `StartDate`) VALUES (342, 'Sport', 'Kung Fu', 250, '2022-01-27');
+INSERT INTO `Club_DB`.`Player` (`PlayerSSN`, `Management_Name`, `SportName`, `subPrice`, `StartDate`) VALUES (343, 'Sport', 'Kung Fu', 250, '2020-03-28');
+INSERT INTO `Club_DB`.`Player` (`PlayerSSN`, `Management_Name`, `SportName`, `subPrice`, `StartDate`) VALUES (344, 'Sport', 'Kung Fu', 250, '2022-07-23');
+INSERT INTO `Club_DB`.`Player` (`PlayerSSN`, `Management_Name`, `SportName`, `subPrice`, `StartDate`) VALUES (345, 'Sport', 'Kung Fu', 250, '2023-12-06');
+INSERT INTO `Club_DB`.`Player` (`PlayerSSN`, `Management_Name`, `SportName`, `subPrice`, `StartDate`) VALUES (346, 'Sport', 'Kung Fu', 250, '2021-01-25');
+INSERT INTO `Club_DB`.`Player` (`PlayerSSN`, `Management_Name`, `SportName`, `subPrice`, `StartDate`) VALUES (347, 'Sport', 'Kung Fu', 250, '2020-10-24');
 
 COMMIT;
 
