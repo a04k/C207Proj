@@ -1,4 +1,4 @@
-# COMP207 Project: Club Database
+ds# COMP207 Project: Club Database
 
 ## Team Code
 
@@ -27,13 +27,14 @@
 
 ### Generating the Data for Inserts
 ---
+
    Writing and creating data for people manually would have taken a very long time especially when dealing with a whole lot of it so, to save time we built a program that could give insert statements to fill up the tables.
 
 
   ```python
 import random
 import datetime
-<details><summary> 
+
 def genData():
     downtown_streets = ["El Tahrir", "Talaat Harb", "Al Falaky", "26 July St", "Champeleon", "Sherif", "Adly"]
     zamalek_streets = ["Abou El Feda", "Bahgat Ali", "Taha Hussein", "Gezira", "Hassan Sabry", "Shagaret Al Dor", "Hassan Assem", "Ahmed Heshmat", "kamal Al Tawil", "Mohammed Mazhar"]
@@ -64,7 +65,6 @@ def genData():
     elif area == 'Shobra':
         street = random.choice(shobra_streets)
         city = 'Cairo'
-    Click to Expand </summary>
     elif area == 'Al-Salam':
         street = random.choice(salam_streets)
         city = 'Cairo'
@@ -85,47 +85,9 @@ def genData():
 
     return first_name, last_name , gender , f"{random_number} {street}, {area}, {city}"
 
+    ...
 
-def ssnGen():
-    while True:
-        nSSN = random.randint(100, 999)
-        if nSSN not in used_ssn:
-            used_ssn.add(nSSN)
-            return nSSN
-
-used_ssn = set()
-
-
-def genPerson():
-    Fname, Lname, gender, address = genData()
-    name = Fname + Lname
-    SSN = ssnGen()
-    person = {
-        'SSN': SSN,
-        'Fname': Fname,
-        'Lname': Lname,
-        'address': address,
-        'email': name + str(random.randint(0, 420)) + '@' + random.choice(['gmail.com', 'hotmail.com', 'outlook.com']),
-        'phone_number': random.choice(['010', '011', '012', '015']) + ''.join([str(digit) for digit in random.sample(range(10), 8)]),
-        'birthdate': datetime.date(random.randint(1940, 2016), random.randint(1, 12), random.randint(1, 28)),
-        'gender': gender
-    }
-    return person
-
-personData = [genPerson() for _ in range(250)]
-sql_insert_statement = "INSERT INTO Person (SSN, Fname, Lname, Address, PhoneNumber, Bdate, Gender, Email) VALUES\n "
-
-for person in personData:
-    values = f"({person['SSN']}, '{person['Fname']}', '{person['Lname']}', '{person['address']}', '{person['phone_number']}', '{person['birthdate']}', '{person['gender']}', '{person['email']}'),\n"
-    sql_insert_statement += values
-
-with open('genData.txt', 'w') as file:
-    file.write(sql_insert_statement)
-
-print("-> done")
-</details>
 ```
-
 
   This data generator code can then be edited so we generate data for specific groups, so we could fill up the tables with the data required, and just add all of it into the Person superclass.
   P.S : theres a C++ version of this code too, just not updated though.
