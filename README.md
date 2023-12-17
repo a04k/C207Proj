@@ -28,12 +28,12 @@
 ### Generating the Data for Inserts
 ---
    Writing and creating data for people manually would have taken a very long time especially when dealing with a whole lot of it so, to save time we built a program that could give insert statements to fill up the tables.
-<details>
-<summary> Click to Expand </summary>
+
+
   ```python
 import random
 import datetime
-
+<details><summary> 
 def genData():
     downtown_streets = ["El Tahrir", "Talaat Harb", "Al Falaky", "26 July St", "Champeleon", "Sherif", "Adly"]
     zamalek_streets = ["Abou El Feda", "Bahgat Ali", "Taha Hussein", "Gezira", "Hassan Sabry", "Shagaret Al Dor", "Hassan Assem", "Ahmed Heshmat", "kamal Al Tawil", "Mohammed Mazhar"]
@@ -64,6 +64,7 @@ def genData():
     elif area == 'Shobra':
         street = random.choice(shobra_streets)
         city = 'Cairo'
+    Click to Expand </summary>
     elif area == 'Al-Salam':
         street = random.choice(salam_streets)
         city = 'Cairo'
@@ -122,8 +123,9 @@ with open('genData.txt', 'w') as file:
     file.write(sql_insert_statement)
 
 print("-> done")
-```
 </details>
+```
+
 
   This data generator code can then be edited so we generate data for specific groups, so we could fill up the tables with the data required, and just add all of it into the Person superclass.
   P.S : theres a C++ version of this code too, just not updated though.
