@@ -131,7 +131,83 @@ print("-> done")
  ---
  We had plenty of query ideas, seeing that we have a whole lot of tables and data to work with but we settled on the following 20:
 
-  ``` 
+``` 
+select p.fname ,p.lname,t.SportName, t.teamname ,r.ContractStart
+from person p , teamsport_player t , pro r 
+where t.Player_SSN=p.SSN and r.Player_SSN=p.SSN
+and r.ContractStart in
+(select min(r.ContractStart) 
+from teamsport_player t , pro r ,person b
+where t.Player_SSN=r.Player_SSN and r.Player_SSN=b.SSN
+group by t.TeamName)
 
+select e.Event_Name,e.PlaceName , p.location ,s.name
+from event_managment_place e , place p , hall h ,sponsor s
+where p.PlaceName=e.PlaceName and h.PlaceName=p.PlaceName and e.Event_Name =s.Event_Name
+and h.NumberOfSeats=(select max(h.NumberOfSeats) from hall h);
 
-  ```
+select* from menu 
+where item like"%pizza%";
+
+select e.name as event_name, e.date , s.name as sponser, emp.placename as place_name
+from event e 
+join sponsor s on  e.name = s.event_name, event_managment_place emp
+where e.Date like '%2023%'  and e.name = emp.event_name;
+
+select p.fname ,p.lname,p.email,m.MembershipStartDate
+from member m , person p 
+where p.ssn=m.Member_SSN and 
+m.MembershipStartDate between '2005-1-1' and '2015-1-1'
+and m.Member_SSN not in (select player_ssn from pro_player);
+
+select m.Catering_Name , m.item , m.price , cl.Location 
+from menu m inner  join catering_location cl
+on m.Catering_Name = cl.CateringName 
+where m.item like"%coffee%";
+
+select distinct p.fname,p.lname , c.sportname , r.salary ,
+r.salary+0.1*r.salary as 'increased salary' 
+from person p , coach c , pro r,individualsport_player i
+where c.Coach_SSN =p.ssn and c.Coach_SSN=i.Coach_SSN and c.Coach_SSN=r.coach_ssn ;
+
+SELECT p.fname ,p.lname ,e.salary , c.Catering_Name
+ from person p, cateringstaff c , employee e
+ where c.Worker_SSN=p.ssn and p.ssn=e.Employee_SSN and
+ e.salary>
+ (select avg(e.salary) from employee e ,cateringstaff c where c.Worker_SSN=e.Employee_SSN)
+ order by e.salary desc;
+
+select Management_Name,count(Employee_SSN) as 'no of employees'
+from management_employee
+group by management_name 
+order by management_name asc;
+
+select c.Catering_Name , k.type , sum(e.salary) as paid_salaries
+ from cateringstaff c,catering k,employee e
+ where c.Worker_SSN=e.Employee_SSN and c.Catering_Name=k.name 
+ group by c.Catering_Name 
+ order by paid_salaries desc;
+
+select sportname,count(Player_SSN) as no_of_players from pro_player
+group by sportname
+having count(Player_SSN)>=10
+order by no_of_players asc;
+
+select p.fname , p.lname , n.contractstart , n.contractend ,n.salary
+from person p
+join pro n on n.player_ssn = p.ssn
+where n.contractend like '%2025%' and n.salary > 400000;
+
+select p.fname ,p.lname , m.name from person p , management m
+where m.Manager_SSN=p.ssn
+group by m.name;
+
+select * from menu 
+where price between 80 and 150
+and item like '%chicken%';
+
+select p.*  from person p , cateringstaff c 
+where p.ssn = c.worker_ssn and c.Catering_Name in 
+(select cateringname from catering_location group by CateringName having count(*)>1);
+
+```
