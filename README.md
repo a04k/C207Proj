@@ -23,7 +23,7 @@ ds# COMP207 Project: Club Database
   ![RM](./DigitalSchemas/RM.jpeg)
 
 - **RM- Relational Model**
-  ![WB-Model](./DigitalSchemas/WBModel.jpg)
+  ![WB-Model](./DigitalSchemas/WBModelnp.jpg)
 
 ### Generating the Data for Inserts
 ---
