@@ -98,6 +98,7 @@ def genData():
  We had plenty of query ideas, seeing that we have a whole lot of tables and data to work with but we settled on the following 20:
 
 ``` 
+-- 
 select p.fname ,p.lname,t.SportName, t.teamname ,r.ContractStart
 from person p , teamsport_player t , pro_player r 
 where t.Player_SSN=p.SSN and r.Player_SSN=p.SSN
