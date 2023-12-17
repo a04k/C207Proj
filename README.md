@@ -1,4 +1,4 @@
-ds# COMP207 Project: Club Database
+# COMP207 Project: Club Database
 
 ## Team Code
 
